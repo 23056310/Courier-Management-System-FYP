@@ -1,154 +1,121 @@
+import React from "react";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import Topbar from "../../components/Topbar";
-import { FaTrash, FaEnvelope } from "react-icons/fa";
-import {
-  getAllInquiries,
-  respondInquiry,
-  deleteInquiry,
-} from "../../services/inquiryService";
+function ManageInquiries() {
 
-export default function ManageInquiry() {
-  const [inquiries, setInquiries] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const inquiries = [
+    {
+      id: "INQ1001",
+      name: "John Doe",
+      email: "john@example.com",
+      message: "I want to know about international shipping rates.",
+      status: "Pending",
+    },
+    {
+      id: "INQ1002",
+      name: "Sarah Khan",
+      email: "sarah@example.com",
+      message: "My parcel is delayed. Please check.",
+      status: "Replied",
+    },
+    {
+      id: "INQ1003",
+      name: "Ali Raza",
+      email: "ali@example.com",
+      message: "Do you offer same-day delivery in my area?",
+      status: "Pending",
+    },
+  ];
 
-  // Fetch inquiries from backend
-  const fetchInquiries = async () => {
-    try {
-      const data = await getAllInquiries();
-      setInquiries(data);
-    // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      alert("Failed to load inquiries");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchInquiries();
-  }, []);
-
-  // Delete inquiry
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this inquiry?")) {
-      try {
-        await deleteInquiry(id);
-        setInquiries(inquiries.filter((inq) => inq._id !== id));
-      // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        alert("Failed to delete inquiry");
-      }
-    }
-  };
-
-  // Respond to inquiry (send email)
-  const handleRespond = async (id, email) => {
-    const message = prompt(`Write your email reply for: ${email}`);
-
-    if (!message) return;
-
-    try {
-      await respondInquiry(id, message);
-      alert("Response email sent successfully!");
-
-      // Update UI
-      setInquiries(
-        inquiries.map((inq) =>
-          inq._id === id ? { ...inq, status: "Responded" } : inq
-        )
-      );
-    // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      alert("Failed to send response");
-    }
+  const getStatusStyle = (status) => {
+    return status === "Replied"
+      ? "bg-green-100 text-green-700"
+      : "bg-yellow-100 text-yellow-700";
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
-      <Sidebar />
-      <main className="flex-1">
-        <Topbar />
+    <>
+      <Navbar />
 
-        <section className="p-6">
-          <h1 className="text-3xl font-bold mb-6">Manage Inquiries</h1>
+      <div className="min-h-screen bg-gray-50 px-6 py-10">
 
-          {loading ? (
-            <p className="text-gray-600">Loading inquiries...</p>
-          ) : inquiries.length === 0 ? (
-            <p className="text-gray-600">No inquiries found.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white rounded-lg shadow-md">
-                <thead className="bg-blue-600 text-white">
-                  <tr>
-                    <th className="py-3 px-6 text-left">Name</th>
-                    <th className="py-3 px-6 text-left">Email</th>
-                    <th className="py-3 px-6 text-left">Phone</th>
-                    <th className="py-3 px-6 text-left">Subject</th>
-                    <th className="py-3 px-6 text-left">Message</th>
-                    <th className="py-3 px-6 text-center">Status</th>
-                    <th className="py-3 px-6 text-center">Actions</th>
-                  </tr>
-                </thead>
+        <h1 className="text-3xl font-bold text-blue-600 mb-6">
+          Manage Inquiries
+        </h1>
 
-                <tbody>
-                  {inquiries.map((inq) => (
-                    <tr
-                      key={inq._id}
-                      className="border-b border-gray-200 hover:bg-gray-100"
-                    >
-                      <td className="py-3 px-6">{inq.name}</td>
-                      <td className="py-3 px-6">{inq.email}</td>
-                      <td className="py-3 px-6">{inq.phone}</td>
-                      <td className="py-3 px-6">{inq.subject}</td>
-                      <td className="py-3 px-6">{inq.message}</td>
+        {/* TABLE */}
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
 
-                      <td className="py-3 px-6 text-center">
-                        {inq.status === "Pending" ? (
-                          <span className="text-yellow-600 font-semibold">
-                            {inq.status}
-                          </span>
-                        ) : (
-                          <span className="text-green-600 font-semibold">
-                            {inq.status}
-                          </span>
-                        )}
-                      </td>
+          <table className="w-full text-left">
 
-                      <td className="py-3 px-6 flex justify-center gap-2">
-                        {/* Respond Button */}
-                        <button
-                          onClick={() => handleRespond(inq._id, inq.email)}
-                          disabled={inq.status === "Responded"}
-                          className={`flex items-center gap-1 px-2 py-1 rounded text-white ${
-                            inq.status === "Responded"
-                              ? "bg-gray-400 cursor-not-allowed"
-                              : "bg-blue-600 hover:bg-blue-700 transition"
-                          }`}
-                        >
-                          <FaEnvelope /> Respond
-                        </button>
-                     
+            {/* HEADER */}
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-4">Inquiry ID</th>
+                <th className="p-4">Name</th>
+                <th className="p-4">Email</th>
+                <th className="p-4">Message</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Actions</th>
+              </tr>
+            </thead>
 
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => handleDelete(inq._id)}
-                          className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                        >
-                          <FaTrash /> Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+            {/* BODY */}
+            <tbody>
+              {inquiries.map((inq, index) => (
+                <tr key={index} className="border-t">
 
-              </table>
-            </div>
-          )}
-        </section>
-      </main>
-    </div>
+                  <td className="p-4 font-medium">
+                    {inq.id}
+                  </td>
+
+                  <td className="p-4">
+                    {inq.name}
+                  </td>
+
+                  <td className="p-4 text-gray-600">
+                    {inq.email}
+                  </td>
+
+                  {/* MESSAGE */}
+                  <td className="p-4 text-gray-600 max-w-xs truncate">
+                    {inq.message}
+                  </td>
+
+                  {/* STATUS */}
+                  <td className="p-4">
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusStyle(inq.status)}`}>
+                      {inq.status}
+                    </span>
+                  </td>
+
+                  {/* ACTIONS */}
+                  <td className="p-4 space-x-2">
+
+                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                      Reply
+                    </button>
+
+                    <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                      Delete
+                    </button>
+
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+      <Footer />
+    </>
   );
 }
+
+export default ManageInquiries;

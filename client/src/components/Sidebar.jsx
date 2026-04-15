@@ -1,15 +1,16 @@
-
 import React, { useState, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaChartBar,
-  FaHotel,
+  FaBox,
   FaUsers,
+  FaTruck,
   FaClipboardList,
-  FaBed,
   FaCog,
   FaSignOutAlt,
   FaBars,
+  FaHistory,
+  FaUser,
 } from "react-icons/fa";
 import { AuthContext } from "../context/AuthContext";
 
@@ -17,7 +18,7 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext); // ✅ Access user and logout
+  const { user, logout } = useContext(AuthContext);
 
   const toggleSidebar = () => setCollapsed(!collapsed);
 
@@ -25,34 +26,39 @@ export default function Sidebar() {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (confirmLogout) {
       logout();
-      navigate("/");
+      navigate("/login");
     }
   };
 
-  // ✅ Role-based navigation items
+  /* ================= ROLE BASED MENU ================= */
+
   const navItemsByRole = {
     admin: [
-      { label: "Dashboard", icon: <FaChartBar />, to: "/admin-dashboard" },
-      { label: "Manage Users", icon: <FaUsers />, to: "/manage-users" },
-      { label: "Manage Inquiries", icon: <FaClipboardList />, to: "/manage-inquiries" },
-      { label: "Verify Hostels", icon: <FaHotel />, to: "/verify-hostels" },
-      { label: "Settings", icon: <FaCog />, to: "/settings" },
+      { label: "Dashboard", icon: <FaChartBar />, to: "/admin/dashboard" },
+      { label: "Manage Parcels", icon: <FaBox />, to: "/admin/parcels" },
+      { label: "Customers", icon: <FaUsers />, to: "/admin/customers" },
+      { label: "Drivers", icon: <FaTruck />, to: "/admin/drivers" },
+      { label: "Inquiries", icon: <FaClipboardList />, to: "/admin/inquiries" },
+      { label: "Reports", icon: <FaChartBar />, to: "/admin/reports" },
+      { label: "Settings", icon: <FaCog />, to: "/admin/settings" },
     ],
-    owner: [
-      { label: "Dashboard", icon: <FaChartBar />, to: "/owner-dashboard" },
-      { label: "Manage Hostels", icon: <FaHotel />, to: "/manage-hostels" },
-      { label: "Manage Bookings", icon: <FaClipboardList />, to: "/booking-request" },
-      { label: "Manage Rooms", icon: <FaBed />, to: "/manage-rooms" },
+
+    customer: [
+      { label: "Dashboard", icon: <FaChartBar />, to: "/dashboard" },
+      { label: "My Parcels", icon: <FaBox />, to: "/my-parcels" },
+      { label: "Parcel History", icon: <FaHistory />, to: "/parcel-history" },
+      { label: "Profile", icon: <FaUser />, to: "/profile" },
     ],
-    student: [
-      { label: "Dashboard", icon: <FaChartBar />, to: "/student-dashboard" },
-      { label: "Hostel List", icon: <FaHotel />, to: "/Hostel-List" },
-      { label: "My Bookings", icon: <FaClipboardList />, to: "/my-bookings" },
+
+    driver: [
+      { label: "Dashboard", icon: <FaChartBar />, to: "/driver/dashboard" },
+      { label: "Assigned Parcels", icon: <FaBox />, to: "/driver/parcels" },
+      { label: "Delivery History", icon: <FaHistory />, to: "/driver/history" },
+      { label: "Profile", icon: <FaUser />, to: "/profile" },
     ],
   };
 
-  // ✅ Get items based on user role
-  const navItems = user?.role ? navItemsByRole[user.role] || [] : [];
+  const navItems = navItemsByRole[user?.role] || [];
 
   return (
     <aside
@@ -60,26 +66,24 @@ export default function Sidebar() {
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      {/* Logo / Title */}
+      {/* HEADER */}
       <div className="flex items-center justify-between px-4 py-6 border-b border-blue-500">
         {!collapsed && (
-          <span className="text-2xl font-bold">
+          <span className="text-xl font-bold">
             {user?.role === "admin"
               ? "Admin Panel"
-              : user?.role === "owner"
-              ? "Owner Panel"
-              : "Student Panel"}
+              : user?.role === "driver"
+              ? "Driver Panel"
+              : "Customer Panel"}
           </span>
         )}
-        <button
-          onClick={toggleSidebar}
-          className="text-white text-xl focus:outline-none"
-        >
+
+        <button onClick={toggleSidebar} className="text-white text-xl">
           <FaBars />
         </button>
       </div>
 
-      {/* Navigation */}
+      {/* NAVIGATION */}
       <nav className="flex-1 px-2 py-6 space-y-2">
         {navItems.map((item) => (
           <SidebarItem
@@ -93,32 +97,31 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
+      {/* LOGOUT */}
       <div className="px-2 py-6 border-t border-blue-500">
         <button
           onClick={handleLogout}
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-blue-600 ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-600 w-full ${
             collapsed ? "justify-center" : ""
           }`}
         >
-          <span className="text-lg">
-            <FaSignOutAlt />
-          </span>
-          {!collapsed && <span className="font-medium">Logout</span>}
+          <FaSignOutAlt />
+          {!collapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>
   );
 }
 
+/* ================= SIDEBAR ITEM ================= */
+
 function SidebarItem({ icon, label, to, active, collapsed }) {
   return (
     <Link
       to={to}
       className={`flex items-center gap-3 px-4 py-3 rounded-lg transition
-        ${active ? "bg-blue-600" : "hover:bg-blue-600"} ${
-        collapsed ? "justify-center" : ""
-      }`}
+        ${active ? "bg-blue-600" : "hover:bg-blue-600"} 
+        ${collapsed ? "justify-center" : ""}`}
     >
       <span className="text-lg">{icon}</span>
       {!collapsed && <span className="font-medium">{label}</span>}

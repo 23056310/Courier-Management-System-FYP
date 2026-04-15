@@ -16,11 +16,7 @@ import { Server } from 'socket.io';
 import connectDB from './config/db.js'; 
 import authRoutes from './routes/authRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
-import websiteSettingsRoutes from "./routes/websiteSettingsRoutes.js";
-import hotelRoutes from "./routes/hotelRoutes.js";
-import roomRoutes from "./routes/roomRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js";
-import notificationRoutes from "./routes/notificationRoutes.js"; 
+
 
 // Express app + HTTP server
 const app = express();
@@ -66,11 +62,6 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use("/api/inquiries", inquiryRoutes);
-app.use("/api/settings", websiteSettingsRoutes);
-app.use("/api/hostels", hotelRoutes);
-app.use("/api/rooms", roomRoutes);
-app.use("/api/bookings", bookingRoutes);
-app.use("/api/notifications", notificationRoutes);
 
 app.get('/', (req, res) => {
   res.send('🛎️ Hotel Booking Backend is running!');

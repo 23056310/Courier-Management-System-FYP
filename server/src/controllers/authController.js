@@ -1,9 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import Hostel from "../models/Hostel.js";
-import Room from "../models/Room.js";
-import Booking from "../models/Booking.js";
 import { generateToken } from "../utils/generateToken.js";
 
 /* ===============================

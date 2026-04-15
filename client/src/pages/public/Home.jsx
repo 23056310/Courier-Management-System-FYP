@@ -1,145 +1,166 @@
 import React from "react";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 const Home = () => {
   return (
-    <div className="bg-white min-h-screen px-6 py-10">
-      {/* Hero Section */}
-      <section className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-blue-600">
-          Next Day Delivery Available
-        </h1>
-        <p className="mt-4 text-gray-600 text-lg">
-          Fast. Reliable. Trackable. <br />
-          Global logistics solutions for the modern world. Ship parcels locally
-          or internationally with real-time tracking and guaranteed delivery
-          times.
-        </p>
-        <div className="mt-6 space-x-4">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-            Book a Shipment
+    <>
+      <Navbar />
+
+      <div className="min-h-screen bg-white">
+
+        {/* HERO SECTION WITH IMAGE */}
+        <section
+          className="relative h-[85vh] flex items-center justify-center text-center text-white"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+
+          <div className="relative z-10 px-6">
+            <h1 className="text-5xl font-bold">
+              Fast & Reliable Courier Service
+            </h1>
+
+            <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-200">
+              Delivering parcels safely across the country with real-time tracking,
+              secure handling, and on-time delivery guarantee.
+            </p>
+
+            <div className="mt-6 space-x-4">
+              <button className="bg-blue-600 px-6 py-3 rounded-md hover:bg-blue-700">
+                Book Shipment
+              </button>
+              <button className="bg-white text-black px-6 py-3 rounded-md hover:bg-gray-200">
+                Track Parcel
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* TRACKING SECTION */}
+        <section className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 -mt-16 relative z-20">
+          <h2 className="text-2xl font-bold text-center mb-4">
+            Track Your Parcel
+          </h2>
+
+          <div className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Enter Tracking ID (e.g. CMS123456)"
+              className="border w-full px-4 py-2 rounded-md"
+            />
+            <button className="bg-blue-600 text-white px-6 rounded-md hover:bg-blue-700">
+              Track
+            </button>
+          </div>
+        </section>
+
+        {/* SERVICES SECTION WITH IMAGES */}
+        <section className="px-6 py-16">
+          <h2 className="text-3xl font-bold text-center mb-10">
+            Our Services
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            {/* Card 1 */}
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
+                className="h-48 w-full object-cover"
+              />
+              <div className="p-4">
+                <h3 className="font-bold text-lg">Domestic Delivery</h3>
+                <p className="text-gray-600 text-sm mt-2">
+                  Fast delivery within the country with secure handling.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=80"
+                className="h-48 w-full object-cover"
+              />
+              <div className="p-4">
+                <h3 className="font-bold text-lg">International Shipping</h3>
+                <p className="text-gray-600 text-sm mt-2">
+                  Ship globally with customs support and tracking.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1604147706283-d7119b5b822c?auto=format&fit=crop&w=800&q=80"
+                className="h-48 w-full object-cover"
+              />
+              <div className="p-4">
+                <h3 className="font-bold text-lg">Same Day Delivery</h3>
+                <p className="text-gray-600 text-sm mt-2">
+                  Urgent deliveries within hours in city areas.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* FEATURES SECTION */}
+        <section className="bg-gray-50 py-16 px-6">
+          <h2 className="text-3xl font-bold text-center mb-10">
+            Why Choose Us
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6 text-center">
+
+            <div>
+              <h3 className="font-bold text-xl">📦 Real-Time Tracking</h3>
+              <p className="text-gray-600 mt-2">
+                Track your parcel anytime with live updates.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl">⚡ Fast Delivery</h3>
+              <p className="text-gray-600 mt-2">
+                Optimized routes for quick and safe delivery.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-xl">🔐 Secure System</h3>
+              <p className="text-gray-600 mt-2">
+                Role-based access ensures full security.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        {/* CTA SECTION */}
+        <section className="text-center py-16">
+          <h2 className="text-3xl font-bold">Start Shipping Today</h2>
+          <p className="text-gray-600 mt-3">
+            Join our platform and manage all deliveries easily.
+          </p>
+
+          <button className="mt-6 bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700">
+            Get Started
           </button>
-          <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300">
-            View Pricing
-          </button>
-        </div>
-        <p className="mt-4 text-yellow-500 font-semibold">
-          ★★★★★ Trusted by 10,000+ businesses
-        </p>
-      </section>
+        </section>
 
-      {/* Tracking Box */}
-      <section className="max-w-md mx-auto bg-gray-100 p-6 rounded-lg shadow-md mb-12">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Track Your Shipment</h2>
-        <input
-          type="text"
-          placeholder="Enter tracking ID (e.g., TRK123456789)"
-          className="border px-4 py-2 rounded-md w-full mb-4"
-        />
-        <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-          Track Package
-        </button>
-      </section>
+      </div>
 
-      {/* Services Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-center mb-6">Our Core Services</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">Domestic Delivery</h3>
-            <p className="text-gray-600 mt-2">
-              Fast and secure door-to-door delivery within the country. Choose
-              from Standard or Express options.
-            </p>
-            <a href="#" className="text-blue-600 mt-4 block">Explore Details →</a>
-          </div>
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">International Shipping</h3>
-            <p className="text-gray-600 mt-2">
-              Global logistics coverage reaching over 200 countries with customs
-              handling and documentation support.
-            </p>
-            <a href="#" className="text-blue-600 mt-4 block">Explore Details →</a>
-          </div>
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">Same-Day Delivery</h3>
-            <p className="text-gray-600 mt-2">
-              Critical, time-sensitive deliveries across major metropolitan
-              areas. Pickup within 60 minutes.
-            </p>
-            <a href="#" className="text-blue-600 mt-4 block">Explore Details →</a>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="mb-12 text-center">
-        <h2 className="text-2xl font-bold mb-6">How It Works</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold">Step 1: Book & Pay</h3>
-            <p className="text-gray-600 mt-2">
-              Enter your parcel details, choose a service, and pay securely online.
-            </p>
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold">Step 2: We Pick Up</h3>
-            <p className="text-gray-600 mt-2">
-              Our courier arrives at your doorstep for a hassle-free collection.
-            </p>
-          </div>
-          <div className="p-6 border rounded-lg">
-            <h3 className="font-semibold">Step 3: Safe Delivery</h3>
-            <p className="text-gray-600 mt-2">
-              Your parcel is tracked every step of the way until it reaches its destination.
-            </p>
-          </div>
-        </div>
-        <p className="mt-6 text-gray-500">
-          2M+ Parcels Delivered | 200+ Global Locations | 5K+ Active Drivers | 99.9% Service Quality
-        </p>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-center mb-6">Voices of Trust</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-6 border rounded-lg shadow-sm">
-            <p className="text-gray-600 italic">
-              “The real-time tracking is a game-changer for my online business. Customers love the transparency and speed.”
-            </p>
-            <p className="mt-2 font-semibold">— Sarah Jenkins, E-commerce Owner</p>
-          </div>
-          <div className="p-6 border rounded-lg shadow-sm">
-            <p className="text-gray-600 italic">
-              “Reliable, professional, and consistent. CMS has become our primary logistics partner for all corporate shipping.”
-            </p>
-            <p className="mt-2 font-semibold">— Michael Chen, Logistics Manager</p>
-          </div>
-          <div className="p-6 border rounded-lg shadow-sm">
-            <p className="text-gray-600 italic">
-              “Same-day delivery actually means same-day! They have saved us multiple times with urgent client documents.”
-            </p>
-            <p className="mt-2 font-semibold">— Emma Rodriguez, Legal Consultant</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Ready to start shipping?</h2>
-        <p className="text-gray-600 mb-6">
-          Join thousands of satisfied customers. Create an account today and manage all your deliveries from a single dashboard.
-        </p>
-        <div className="space-x-4">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-            Create Free Account
-          </button>
-          <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300">
-            Talk to Sales
-          </button>
-        </div>
-      </section>
-    </div>
+      <Footer />
+    </>
   );
 };
 
