@@ -18,13 +18,21 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import Profile from "./pages/public/Profile";
 
 /* ADMIN PAGES */
-import Dashboard from "./pages/admin/Dashboard";
+import AdminDashboard from "./pages/admin/Dashboard";
 import ManageParcels from "./pages/admin/ManageParcels";
 import ManageCustomers from "./pages/admin/ManageCustomers";
 import ManageDrivers from "./pages/admin/ManageDrivers";
 import ManageInquiries from "./pages/admin/ManageInquiries";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+
+/* CUSTOMER PAGES */
+import CustomerDashboard from "./pages/customer/Dashboard";
+import ParcelHistory from "./pages/customer/ParcelHistory";
+
+/* DRIVER PAGES */
+import DriverDashboard from "./pages/driver/Dashboard";
+import MyParcels from "./pages/driver/MyParcels";
 
 /* ERROR PAGES */
 import Unauthorized from "./pages/errors/Unauthorized";
@@ -65,7 +73,7 @@ function App() {
         path="/admin/dashboard"
         element={
           <ProtectedRoute roles={["admin"]}>
-            <Dashboard />
+            <AdminDashboard />
           </ProtectedRoute>
         }
       />
@@ -120,6 +128,42 @@ function App() {
         element={
           <ProtectedRoute roles={["admin"]}>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= CUSTOMER ROUTES ================= */}
+      <Route
+        path="/customer/dashboard"
+        element={
+          <ProtectedRoute roles={["customer"]}>
+            <CustomerDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/parcels"
+        element={
+          <ProtectedRoute roles={["customer"]}>
+            <ParcelHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= DRIVER ROUTES ================= */}
+      <Route
+        path="/driver/dashboard"
+        element={
+          <ProtectedRoute roles={["driver"]}>
+            <DriverDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/driver/my-parcels"
+        element={
+          <ProtectedRoute roles={["driver"]}>
+            <MyParcels />
           </ProtectedRoute>
         }
       />

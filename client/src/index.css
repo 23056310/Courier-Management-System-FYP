@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  /* REFINED ENTERPRISE COLOR PALETTE */
+  --color-primary: #2150e6;
+  --color-primary-dark: #1a3fb3;
+  --color-accent: #f59e0b;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    /* SET GLOBAL BACKGROUND TO SUBTLE SLATE FOR PREMIUM FEEL */
+    @apply font-sans antialiased text-gray-900 bg-[#f8fafc];
+    overflow-x: hidden;
+  }
+
+  /* Custom Scrollbar for a premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-50;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 rounded-full border-2 border-solid border-gray-50;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/40;
+  }
+}
+
+@layer components {
+  /* PREMIUM UI UTILITIES */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.05)];
+  }
+  
+  .btn-primary {
+    @apply px-8 py-4 bg-gray-900 text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl 
+           transition-all duration-500 hover:bg-primary hover:shadow-2xl hover:shadow-primary/20
+           active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply px-8 py-4 bg-white text-gray-900 font-bold uppercase tracking-widest text-[10px] rounded-2xl border-2 border-gray-50
+           transition-all duration-300 hover:bg-gray-50 hover:shadow-md
+           active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-5 py-4 bg-gray-50 border-2 border-gray-50 rounded-2xl focus:outline-none 
+           focus:ring-0 focus:border-primary/20 focus:bg-white transition-all duration-300 font-bold text-sm text-gray-900;
+  }
+
+  /* CUSTOM SCROLLBAR FOR INNER CONTAINERS */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 rounded-full;
+  }
+}
+
+/* MICRO-ANIMATIONS */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}

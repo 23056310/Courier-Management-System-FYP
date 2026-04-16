@@ -1,105 +1,142 @@
 import React from "react";
+import { HiOutlineUserGroup, HiOutlineLightBulb, HiOutlineBadgeCheck } from "react-icons/hi";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-function About() {
+const About = () => {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Navbar />
 
-      <div className="min-h-screen bg-white">
-
-        {/* HERO SECTION */}
-        <section
-          className="relative h-[60vh] flex items-center justify-center text-center text-white"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&w=1600&q=80')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-
-          <div className="relative z-10 px-6">
-            <h1 className="text-4xl font-bold">About Our Courier System</h1>
-            <p className="mt-3 text-gray-200 max-w-2xl mx-auto">
-              A modern digital solution for fast, secure, and reliable parcel delivery
-              with real-time tracking and smart management.
+      {/* HERO SECTION */}
+      <section className="relative pt-32 pb-20 px-6 bg-gray-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
+              Our Story
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              Empowering Global <br />
+              <span className="text-primary italic">Connections.</span>
+            </h1>
+            <p className="text-lg text-gray-500 max-w-xl leading-relaxed">
+              We started with a simple goal: to make logistics effortless. Today, 
+              we are a leading platform connecting thousands of businesses and individuals 
+              through a smart, reliable, and secure courier network.
             </p>
           </div>
-        </section>
-
-        {/* INTRO SECTION */}
-        <section className="max-w-5xl mx-auto px-6 py-12 text-center">
-          <h2 className="text-3xl font-bold mb-4">Who We Are</h2>
-          <p className="text-gray-600 leading-relaxed">
-            The Courier Management System (CMS) is a web-based platform designed to
-            simplify logistics operations. It connects customers, drivers, and administrators
-            in a single system, ensuring fast delivery, transparency, and efficient tracking.
-          </p>
-        </section>
-
-        {/* MISSION & VISION */}
-        <section className="px-6 py-10 bg-gray-50">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-2xl font-bold mb-3">Our Mission</h3>
-              <p className="text-gray-600">
-                To provide a reliable and efficient courier system that reduces manual work,
-                improves delivery speed, and ensures real-time tracking for customers.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-2xl font-bold mb-3">Our Vision</h3>
-              <p className="text-gray-600">
-                To become a fully digital logistics platform that enhances global delivery
-                systems with automation, transparency, and smart tracking technologies.
-              </p>
-            </div>
-
+          <div className="relative">
+            <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl -z-10" />
+            <img 
+              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=800" 
+              alt="Our Team" 
+              className="rounded-3xl shadow-2xl"
+            />
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* FEATURES */}
-        <section className="px-6 py-16">
-          <h2 className="text-3xl font-bold text-center mb-10">
-            Why Choose Us
-          </h2>
+      {/* CORE VALUES */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-12">
+          <ValueCard 
+            icon={<HiOutlineUserGroup />}
+            title="Customer Centric"
+            desc="Every feature we build is designed with our users in mind, ensuring ease of use and maximum transparency."
+          />
+          <ValueCard 
+            icon={<HiOutlineLightBulb />}
+            title="Innovative Solutions"
+            desc="We leverage the latest technology to optimize routes and provide real-time updates for every shipment."
+          />
+          <ValueCard 
+            icon={<HiOutlineBadgeCheck />}
+            title="Unmatched Security"
+            desc="Safety isn't just a promise; it's our foundation. We use role-based access and encrypted protocols."
+          />
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-3 gap-6 text-center">
-
-            <div className="p-6 border rounded-lg shadow-sm">
-              <h3 className="text-xl font-bold">🚚 Fast Delivery</h3>
-              <p className="text-gray-600 mt-2">
-                Optimized delivery system ensures quick parcel delivery.
-              </p>
+      {/* MISSION & VISION */}
+      <section className="bg-gray-900 py-24 px-6 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+          <div>
+            <h2 className="text-4xl font-bold mb-12">Our Core Ideologies</h2>
+            <div className="space-y-12">
+              <div>
+                <h3 className="text-2xl font-bold mb-4 text-primary">Our Mission</h3>
+                <p className="text-gray-400 text-lg leading-relaxed">
+                  To provide a reliable and efficient courier system that reduces manual work,
+                  improves delivery speed, and ensures real-time tracking for customers.
+                </p>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-4 text-primary">Our Vision</h3>
+                <p className="text-gray-400 text-lg leading-relaxed">
+                  To become a fully digital logistics platform that enhances global delivery
+                  systems with automation, transparency, and smart tracking technologies.
+                </p>
+              </div>
             </div>
-
-            <div className="p-6 border rounded-lg shadow-sm">
-              <h3 className="text-xl font-bold">📦 Real-Time Tracking</h3>
-              <p className="text-gray-600 mt-2">
-                Track your parcel anytime with live status updates.
-              </p>
-            </div>
-
-            <div className="p-6 border rounded-lg shadow-sm">
-              <h3 className="text-xl font-bold">🔐 Secure System</h3>
-              <p className="text-gray-600 mt-2">
-                Role-based access ensures full system security.
-              </p>
-            </div>
-
           </div>
-        </section>
+          <div className="hidden md:block">
+            <div className="relative p-12 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm">
+              <div className="space-y-8">
+                <p className="text-2xl font-medium leading-relaxed italic">
+                  "Logistics is no longer just about moving boxes; it's about moving 
+                  the world forward through data and dedication."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary rounded-full" />
+                  <div>
+                    <p className="font-bold">Project Team</p>
+                    <p className="text-sm text-gray-500">CMS Founders</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      </div>
+      {/* TEAM SECTION MOCKUP */}
+      <section className="py-24 px-6 max-w-7xl mx-auto text-center">
+        <h2 className="text-4xl font-bold mb-16">The Minds Behind CMS</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {[1, 2, 3, 4].map((i) => (
+            <div 
+              key={i}
+              className="group"
+            >
+              <div className="aspect-square bg-gray-100 rounded-3xl mb-6 overflow-hidden relative">
+                <img 
+                  src={`https://i.pravatar.cc/300?img=${i + 10}`} 
+                  alt="Team Member" 
+                  className="w-full h-full object-cover grayscale transition-all group-hover:grayscale-0 group-hover:scale-110"
+                />
+              </div>
+              <h4 className="font-bold text-lg">Member {i}</h4>
+              <p className="text-sm text-gray-500">Core Developer</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <Footer />
-    </>
+    </div>
   );
-}
+};
+
+const ValueCard = ({ icon, title, desc }) => (
+  <div
+    className="p-10 rounded-[2.5rem] bg-white border border-gray-100 hover:shadow-2xl hover:shadow-gray-200 transition-all duration-300 hover:-translate-y-2"
+  >
+    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl mb-8">
+      {icon}
+    </div>
+    <h3 className="text-2xl font-bold mb-4">{title}</h3>
+    <p className="text-gray-500 leading-relaxed">{desc}</p>
+  </div>
+);
 
 export default About;

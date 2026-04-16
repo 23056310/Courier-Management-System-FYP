@@ -1,140 +1,132 @@
 import React from "react";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Sidebar from "../../components/Sidebar";
+import Topbar from "../../components/Topbar";
+import { HiOutlineSearch, HiOutlineFilter, HiOutlineDownload, HiOutlineDotsVertical, HiOutlineTruck, HiOutlineMail, HiOutlinePhone, HiOutlineCube } from "react-icons/hi";
 
-function ManageDrivers() {
-
+const ManageDrivers = () => {
   const drivers = [
     {
-      id: "DRV1001",
+      id: "DRV-3001",
       name: "Ramesh Sharma",
-      email: "ramesh@example.com",
-      phone: "9800000011",
+      email: "r.sharma@courierms.com",
+      phone: "+977 9800000011",
       status: "Active",
       parcels: 5,
     },
     {
-      id: "DRV1002",
+      id: "DRV-3002",
       name: "Sita Rai",
-      email: "sita@example.com",
-      phone: "9800000012",
+      email: "sita.rai@courierms.com",
+      phone: "+977 9800000012",
       status: "Busy",
-      parcels: 2,
+      parcels: 12,
     },
     {
-      id: "DRV1003",
+      id: "DRV-3003",
       name: "Amit Kumar",
-      email: "amit@example.com",
-      phone: "9800000013",
+      email: "amit.k@courierms.com",
+      phone: "+977 9800000013",
       status: "Inactive",
       parcels: 0,
     },
   ];
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "Active":
-        return "bg-green-100 text-green-700";
-      case "Busy":
-        return "bg-yellow-100 text-yellow-700";
-      case "Inactive":
-        return "bg-red-100 text-red-600";
-      default:
-        return "bg-gray-100 text-gray-600";
-    }
-  };
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <Topbar />
+
+        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+            <div>
+               <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Fleet Management</h1>
+               <p className="text-gray-500 font-medium">Manage your delivery personnel and track their active workloads.</p>
+            </div>
+            <div className="flex gap-3">
+               <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+                 <HiOutlineFilter /> Filter
+               </button>
+               <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+                 <HiOutlineDownload /> Export
+               </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-50 bg-gray-50/50">
+                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
+                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact</th>
+                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Active Load</th>
+                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {drivers.map((driver, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50/50 transition-colors group">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gray-100 rounded-[1.25rem] flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-all text-2xl">
+                             <HiOutlineTruck />
+                          </div>
+                          <div>
+                            <p className="font-bold text-gray-900 group-hover:text-primary transition-colors italic uppercase tracking-tighter">{driver.name}</p>
+                            <p className="text-xs text-gray-400 font-medium uppercase font-black">{driver.id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-6">
+                         <div className="flex flex-col gap-1 text-xs font-bold text-gray-500">
+                           <span className="flex items-center gap-2"><HiOutlineMail className="text-primary" /> {driver.email}</span>
+                           <span className="flex items-center gap-2"><HiOutlinePhone className="text-primary" /> {driver.phone}</span>
+                         </div>
+                      </td>
+                      <td className="px-8 py-6">
+                         <div className="flex items-center gap-2">
+                            <span className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary text-xs font-black italic">{driver.parcels}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Parcels</span>
+                         </div>
+                      </td>
+                      <td className="px-8 py-6">
+                        <StatusBadge status={driver.status} />
+                      </td>
+                      <td className="px-8 py-6 text-right">
+                         <div className="flex justify-end gap-2">
+                           <button className="px-4 py-2 bg-gray-50 text-gray-900 text-[10px] font-black uppercase rounded-xl hover:bg-primary hover:text-white transition-all">Details</button>
+                           <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-900">
+                             <HiOutlineDotsVertical />
+                           </button>
+                         </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+const StatusBadge = ({ status }) => {
+  const styles = {
+    'Active': 'bg-green-50 text-green-600 border-green-100',
+    'Busy': 'bg-orange-50 text-orange-600 border-orange-100',
+    'Inactive': 'bg-red-50 text-red-600 border-red-100'
+  }[status] || 'bg-gray-50 text-gray-600 border-gray-100';
 
   return (
-    <>
-      <Navbar />
-
-      <div className="min-h-screen bg-gray-50 px-6 py-10">
-
-        <h1 className="text-3xl font-bold text-blue-600 mb-6">
-          Manage Drivers
-        </h1>
-
-        {/* TABLE */}
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-
-          <table className="w-full text-left">
-
-            {/* HEADER */}
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-4">Driver ID</th>
-                <th className="p-4">Name</th>
-                <th className="p-4">Email</th>
-                <th className="p-4">Phone</th>
-                <th className="p-4">Parcels Assigned</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Actions</th>
-              </tr>
-            </thead>
-
-            {/* BODY */}
-            <tbody>
-              {drivers.map((driver, index) => (
-                <tr key={index} className="border-t">
-
-                  <td className="p-4 font-medium">
-                    {driver.id}
-                  </td>
-
-                  <td className="p-4">
-                    {driver.name}
-                  </td>
-
-                  <td className="p-4 text-gray-600">
-                    {driver.email}
-                  </td>
-
-                  <td className="p-4 text-gray-600">
-                    {driver.phone}
-                  </td>
-
-                  {/* PARCEL COUNT */}
-                  <td className="p-4 font-semibold text-blue-600">
-                    {driver.parcels}
-                  </td>
-
-                  {/* STATUS */}
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusStyle(driver.status)}`}>
-                      {driver.status}
-                    </span>
-                  </td>
-
-                  {/* ACTIONS */}
-                  <td className="p-4 space-x-2">
-
-                    <button className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                      View
-                    </button>
-
-                    <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                      Assign
-                    </button>
-
-                    <button className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-                      Delete
-                    </button>
-
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-      <Footer />
-    </>
+    <span className={`px-4 py-1.5 rounded-full border text-[11px] font-black uppercase tracking-widest ${styles}`}>
+      {status}
+    </span>
   );
-}
+};
 
-export default ManageDrivers;
+export default ManageDrivers;

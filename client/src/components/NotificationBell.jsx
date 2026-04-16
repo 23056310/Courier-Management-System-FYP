@@ -1,74 +1,87 @@
 import React, { useState } from "react";
-import { FaBell } from "react-icons/fa";
+import { HiOutlineBell, HiOutlineClock, HiOutlineCheckCircle, HiOutlineTruck, HiOutlineChevronRight } from "react-icons/hi";
 
-function NotificationBell() {
+const NotificationBell = () => {
   const [open, setOpen] = useState(false);
 
   const notifications = [
     {
       id: 1,
-      message: "Your parcel TRK123 has been shipped",
+      icon: <HiOutlineTruck className="text-primary" />,
+      bg: "bg-primary/5",
+      title: "Parcel CMS-123",
+      message: "Dispatched from Kathmandu hub.",
       time: "2 mins ago",
     },
     {
       id: 2,
-      message: "Driver assigned for your delivery",
+      icon: <HiOutlineCheckCircle className="text-green-500" />,
+      bg: "bg-green-50",
+      title: "Delivery Success",
+      message: "Your parcel has been delivered.",
       time: "10 mins ago",
     },
     {
       id: 3,
-      message: "Parcel delivered successfully",
+      icon: <HiOutlineClock className="text-orange-500" />,
+      bg: "bg-orange-50",
+      title: "New Assignment",
+      message: "Driver assigned to your order.",
       time: "1 hour ago",
     },
   ];
 
   return (
     <div className="relative">
-
-      {/* BELL ICON */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-full hover:bg-gray-100"
+        className={`relative p-3 rounded-2xl transition-all ${
+          open ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+        }`}
       >
-        <FaBell size={20} />
-
-        {/* BADGE */}
-        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-          {notifications.length}
-        </span>
+        <HiOutlineBell size={22} />
+        {notifications.length > 0 && (
+          <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
+          </span>
+        )}
       </button>
 
-      {/* DROPDOWN */}
       {open && (
-        <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-md border z-50">
-
-          <div className="p-3 border-b font-semibold text-gray-700">
-            Notifications
+        <div className="absolute right-0 mt-4 w-96 bg-white shadow-2xl shadow-gray-200/50 rounded-[2.5rem] border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+            <h3 className="font-black text-gray-900 italic tracking-tighter uppercase">Notifications</h3>
+            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black rounded-full uppercase tracking-widest">{notifications.length} New</span>
           </div>
 
-          <div className="max-h-60 overflow-y-auto">
-
+          <div className="max-h-[400px] overflow-y-auto p-4 space-y-2">
             {notifications.map((n) => (
               <div
                 key={n.id}
-                className="p-3 hover:bg-gray-50 border-b"
+                className="p-4 hover:bg-gray-50 rounded-[1.5rem] transition-colors group cursor-pointer flex gap-4"
               >
-                <p className="text-sm text-gray-700">{n.message}</p>
-                <p className="text-xs text-gray-400">{n.time}</p>
+                <div className={`w-12 h-12 ${n.bg} rounded-2xl flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform`}>
+                  {n.icon}
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-bold text-gray-900 text-sm">{n.title}</h4>
+                    <span className="text-[10px] font-bold text-gray-400">{n.time}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium leading-relaxed">{n.message}</p>
+                </div>
               </div>
             ))}
-
           </div>
 
-          <div className="p-2 text-center text-blue-600 text-sm hover:bg-gray-50 cursor-pointer">
-            View All
-          </div>
-
+          <button className="w-full p-6 text-center text-primary font-black uppercase tracking-widest text-[11px] hover:bg-gray-50 border-t border-gray-50 transition-colors flex items-center justify-center gap-2">
+            View All Notifications <HiOutlineChevronRight />
+          </button>
         </div>
       )}
-
     </div>
   );
-}
+};
 
 export default NotificationBell;

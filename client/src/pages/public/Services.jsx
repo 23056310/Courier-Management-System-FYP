@@ -1,149 +1,110 @@
 import React from "react";
+import { 
+  HiOutlineTruck, 
+  HiOutlineGlobeAlt, 
+  HiOutlineClock, 
+  HiOutlineShieldCheck,
+  HiOutlineSupport,
+  HiOutlineCube
+} from "react-icons/hi";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
+const ServiceCard = ({ icon, title, description, image }) => (
+  <div className="rounded-[2.5rem] bg-white border border-gray-100 hover:shadow-xl hover:shadow-gray-200 transition-all group overflow-hidden flex flex-col">
+    <div className="h-48 w-full overflow-hidden">
+      <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+    </div>
+    <div className="p-10 flex-1 flex flex-col">
+      <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary text-3xl flex items-center justify-center mb-8 group-hover:bg-primary group-hover:text-white transition-all">
+        {icon}
+      </div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-4 italic">{title}</h3>
+      <p className="text-gray-500 leading-relaxed font-medium">
+        {description}
+      </p>
+    </div>
+  </div>
+);
+
 const Services = () => {
   return (
-    <>
+    <div className="overflow-x-hidden pt-20">
       <Navbar />
 
-      <div className="bg-white min-h-screen">
-
-        {/* HERO SECTION */}
-        <section className="text-center px-6 py-16 bg-gray-50">
-          <h1 className="text-4xl font-bold text-blue-600">
-            Professional Logistics Solutions
-          </h1>
-
-          <p className="mt-4 text-gray-600 text-lg max-w-3xl mx-auto">
-            Shipping solutions tailored for your needs. From local express deliveries
-            to global logistics, we ensure safe and timely parcel delivery.
-          </p>
-
-          <div className="mt-6 space-x-4">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-              Get a Quote
-            </button>
-            <button className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300">
-              Contact Sales
-            </button>
-          </div>
-        </section>
-
-        {/* SERVICE CARDS */}
-        <section className="px-6 py-16 grid md:grid-cols-3 gap-8">
-
-          {/* Domestic */}
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">Domestic Delivery</h3>
-            <p className="text-gray-600 mt-2">
-              Reliable nationwide delivery with secure handling.
+      {/* HERO SECTION */}
+      <section className="relative pt-32 pb-20 px-6 bg-gray-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
+              Our Expertise
+            </span>
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              World-Class Logistics <br />
+              <span className="text-primary italic">Solutions.</span>
+            </h1>
+            <p className="text-lg text-gray-500 max-w-xl leading-relaxed">
+              We provide a comprehensive range of logistics and courier solutions 
+              to meet your individual and business needs. From local express 
+              deliveries to global supply chain management.
             </p>
-
-            <ul className="mt-3 text-sm text-gray-500 space-y-1">
-              <li>✓ 2–3 day delivery</li>
-              <li>✓ Local courier network</li>
-              <li>✓ Free pickup service</li>
-              <li>✓ Basic insurance</li>
-            </ul>
-
-            <p className="mt-3 font-semibold">From $9.99</p>
           </div>
-
-          {/* International */}
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">International Shipping</h3>
-            <p className="text-gray-600 mt-2">
-              Global delivery with customs support.
-            </p>
-
-            <ul className="mt-3 text-sm text-gray-500 space-y-1">
-              <li>✓ 200+ countries</li>
-              <li>✓ Customs assistance</li>
-              <li>✓ End-to-end tracking</li>
-              <li>✓ Express options</li>
-            </ul>
-
-            <p className="mt-3 font-semibold">From $45.00</p>
+          <div className="relative">
+            <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl -z-10" />
+            <img 
+              src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800" 
+              alt="Logistics Services" 
+              className="rounded-3xl shadow-2xl"
+            />
           </div>
+        </div>
+      </section>
 
-          {/* Same Day */}
-          <div className="p-6 border rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold">Same-Day Delivery</h3>
-            <p className="text-gray-600 mt-2">
-              Urgent deliveries within hours.
-            </p>
-
-            <ul className="mt-3 text-sm text-gray-500 space-y-1">
-              <li>✓ 2–4 hour delivery</li>
-              <li>✓ Live tracking</li>
-              <li>✓ Priority courier</li>
-              <li>✓ Instant confirmation</li>
-            </ul>
-
-            <p className="mt-3 font-semibold">From $24.99</p>
-          </div>
-        </section>
-
-        {/* FEATURES */}
-        <section className="bg-gray-50 py-16 px-6">
-          <h2 className="text-3xl font-bold text-center mb-10">
-            Why Choose Us
-          </h2>
-
-          <div className="grid md:grid-cols-4 gap-6 text-center">
-
-            <div>
-              <h3 className="font-bold">Punctuality</h3>
-              <p className="text-gray-600 text-sm">
-                99.9% on-time delivery rate
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-bold">Security</h3>
-              <p className="text-gray-600 text-sm">
-                Safe handling of all parcels
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-bold">Global Reach</h3>
-              <p className="text-gray-600 text-sm">
-                200+ international destinations
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-bold">24/7 Support</h3>
-              <p className="text-gray-600 text-sm">
-                Always available assistance
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="text-center py-16">
-          <h2 className="text-3xl font-bold">
-            Ready to send your parcel?
-          </h2>
-
-          <p className="text-gray-600 mt-3">
-            Join thousands of satisfied customers using our courier system.
-          </p>
-
-          <button className="mt-6 bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700">
-            Create Free Account
-          </button>
-        </section>
-
-      </div>
+      {/* SERVICES LIST */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <ServiceCard 
+            icon={<HiOutlineTruck />}
+            title="Domestic Delivery"
+            image="https://images.unsplash.com/photo-1519003722824-192d992a6059?auto=format&fit=crop&q=80&w=600"
+            description="Fast and reliable door-to-door delivery within the country. We cover all major cities with real-time tracking."
+          />
+          <ServiceCard 
+            icon={<HiOutlineGlobeAlt />}
+            title="International Shipping"
+            image="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=600"
+            description="Global reach through our international network. We handle customs and documentation for your ease."
+          />
+          <ServiceCard 
+            icon={<HiOutlineClock />}
+            title="Express Delivery"
+            image="https://images.unsplash.com/photo-1566576721346-d4a3b4eaad5b?auto=format&fit=crop&q=80&w=600"
+            description="Time-sensitive shipments delivered with priority. Same-day and next-day options available in select areas."
+          />
+          <ServiceCard 
+            icon={<HiOutlineShieldCheck />}
+            title="Secure Cargo"
+            image="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600"
+            description="Special handling for valuable or fragile items. Secured packaging and dedicated transit options."
+          />
+          <ServiceCard 
+            icon={<HiOutlineCube />}
+            title="Warehousing"
+            image="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&q=80&w=600"
+            description="Safe and secure storage solutions for your inventory. Integrated with our delivery network for quick fulfillment."
+          />
+          <ServiceCard 
+            icon={<HiOutlineSupport />}
+            title="Full Support"
+            image="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600"
+            description="Dedicated support team available around the clock to assist you with tracking and logistics planning."
+          />
+        </div>
+      </section>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
-export default Services;
+export default Services;
