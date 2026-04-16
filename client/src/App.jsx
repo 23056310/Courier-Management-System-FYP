@@ -40,9 +40,12 @@ import NotFound from "./pages/errors/NotFound";
 
 /* PROTECTED ROUTE */
 import ProtectedRoute from "./context/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
+    <>
+    <Toaster position="top-center" reverseOrder={false} />
     <Routes>
 
       {/* ================= PUBLIC ROUTES ================= */}
@@ -173,6 +176,7 @@ function App() {
       <Route path="*" element={<NotFound />} />
 
     </Routes>
+    </>
   );
 }
 

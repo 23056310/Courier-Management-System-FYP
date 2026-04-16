@@ -14,6 +14,7 @@ const inquirySchema = new mongoose.Schema(
       default: "Pending",
     },
     responseMessage: { type: String },
-    }
+  },
+  { timestamps: true }
 );
 export default mongoose.model("Inquiry", inquirySchema);

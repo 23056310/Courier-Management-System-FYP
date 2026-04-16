@@ -1,5 +1,5 @@
 import React from "react";
-import { HiOutlineCube, HiOutlineUsers, HiOutlineTruck, HiOutlineChatAlt2, HiOutlinePlus, HiOutlinePresentationChartBar, HiOutlineChevronRight } from "react-icons/hi";
+import { HiOutlineCube, HiOutlineUsers, HiOutlineTruck, HiOutlineChatAlt2, HiOutlinePlus, HiOutlinePresentationChartBar, HiOutlineChevronRight, HiOutlineCheckCircle } from "react-icons/hi";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 

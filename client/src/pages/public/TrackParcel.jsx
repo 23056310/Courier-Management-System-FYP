@@ -42,11 +42,11 @@ const TrackParcel = () => {
   };
 
   return (
-    <div className="overflow-x-hidden pt-20">
+    <div className="overflow-x-hidden">
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="bg-primary/5 py-24 px-6 text-center">
+      <section className="relative pt-32 pb-24 px-6 bg-gray-50 text-center overflow-hidden">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-8 italic">
             Trace Your <span className="text-primary">Shipment.</span>

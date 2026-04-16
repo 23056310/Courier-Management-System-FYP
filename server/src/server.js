@@ -16,6 +16,8 @@ import { Server } from 'socket.io';
 import connectDB from './config/db.js'; 
 import authRoutes from './routes/authRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
+import websiteSettingsRoutes from './routes/websiteSettingsRoutes.js';
+import parcelRoutes from './routes/parcelRoutes.js';
 
 
 // Express app + HTTP server
@@ -48,23 +50,23 @@ export const sendSocketNotification = (userId, notification) => {
 };
 
 // Connect MongoDB
-setTimeout(() => {
-  connectDB();
-}, 1000);
+connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Static uploads
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/settings", websiteSettingsRoutes);
+app.use("/api/parcels", parcelRoutes);
 
 app.get('/', (req, res) => {
-  res.send('🛎️ Hotel Booking Backend is running!');
+  res.send('🚀 Courier Management System Backend is running!');
 });
 
 // Start server

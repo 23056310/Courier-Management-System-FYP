@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { updateProfile, changePassword } from "../../services/authService";
+import { updateProfile as updateProfileService, changePassword as changePasswordService } from "../../services/authService";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { HiOutlineUser, HiOutlineMail, HiOutlineCamera, HiOutlineLockClosed, HiOutlineCheck, HiOutlinePencilAlt } from "react-icons/hi";
+import { toast } from "react-hot-toast";
 
 export default function Profile() {
   const { user, setUser } = useContext(AuthContext);
@@ -18,7 +19,6 @@ export default function Profile() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
-  const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -35,34 +35,38 @@ export default function Profile() {
 
   const handleProfileUpdate = async () => {
     setIsSaving(true);
-    setMessage("");
     try {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("email", email);
       if (profilePic) formData.append("profilePic", profilePic);
-      const data = await updateProfile(formData);
+      
+      const data = await updateProfileService(formData);
       setUser(data.user);
-      setMessage(data.message || "Profile updated successfully!");
+      toast.success(data.message || "Profile updated successfully!");
       setIsEditing(false);
       setProfilePic(null);
     } catch (err) {
-      setMessage(err.response?.data?.message || "Profile update failed!");
+      toast.error(err.response?.data?.message || "Profile update failed!");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleChangePassword = async () => {
-    setMessage("");
+    if (!oldPassword || !newPassword) {
+      toast.error("Please fill in both fields");
+      return;
+    }
+    
     try {
-      const data = await changePassword({ oldPassword, newPassword });
-      setMessage(data.message);
+      const data = await changePasswordService({ oldPassword, newPassword });
+      toast.success(data.message || "Password changed successfully!");
       setOldPassword("");
       setNewPassword("");
       setIsChangingPassword(false);
     } catch (err) {
-      setMessage(err.response?.data?.message || "Password change failed!");
+      toast.error(err.response?.data?.message || "Password change failed!");
     }
   };
 
@@ -173,12 +177,6 @@ export default function Profile() {
                    <HiOutlineUser className="text-8xl text-gray-200 mb-6" />
                    <h3 className="text-xl font-black italic uppercase tracking-widest text-gray-400">Profile Dashboard Locked</h3>
                    <p className="text-sm font-medium text-gray-400 max-w-xs mx-auto mt-4">Selective active administrative controls from the left panel to update your identity profile.</p>
-                </div>
-              )}
-
-              {message && (
-                <div className="mt-10 p-4 bg-primary/5 rounded-2xl border border-primary/10 text-primary font-black text-[10px] uppercase tracking-widest animate-pulse text-center">
-                  {message}
                 </div>
               )}
             </div>

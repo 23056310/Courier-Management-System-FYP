@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children, roles }) {
 
   // Not logged in → redirect to login/register
   if (!user) {
-    return <Navigate to="/account" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // ROLE CHECK: if page requires specific roles & user role does NOT match

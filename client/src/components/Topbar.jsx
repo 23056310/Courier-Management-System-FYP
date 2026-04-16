@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { HiOutlineHome, HiOutlineBell, HiOutlineSearch } from "react-icons/hi";
+import { HiOutlineHome, HiOutlineBell } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"; 
 import NotificationBadge from "./NotificationBell";
@@ -9,15 +9,8 @@ export default function Topbar() {
 
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
-      {/* Search / Breadcrumbs Placeholder */}
-      <div className="hidden md:flex items-center gap-4 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 w-96 group focus-within:ring-2 focus-within:ring-primary/10 transition-all">
-        <HiOutlineSearch className="text-gray-400 text-xl" />
-        <input 
-          type="text" 
-          placeholder="Search for parcels, drivers..." 
-          className="bg-transparent border-none focus:outline-none text-sm w-full font-medium"
-        />
-      </div>
+      {/* Spacer for alignment since search is removed */}
+      <div className="hidden md:block" />
 
       <div className="flex items-center gap-2 md:hidden">
          <Link to="/" className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">

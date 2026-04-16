@@ -1,35 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
-import { HiOutlineSearch, HiOutlineFilter, HiOutlineDownload, HiOutlineDotsVertical, HiOutlineTruck, HiOutlineMail, HiOutlinePhone, HiOutlineCube } from "react-icons/hi";
+import { HiOutlineSearch, HiOutlineFilter, HiOutlineDownload, HiOutlineTruck, HiOutlineMail, HiOutlineTrash, HiOutlineUserCircle } from "react-icons/hi";
+import { getAllUsers, deleteUser } from "../../services/authService";
+import { toast } from "react-hot-toast";
 
 const ManageDrivers = () => {
-  const drivers = [
-    {
-      id: "DRV-3001",
-      name: "Ramesh Sharma",
-      email: "r.sharma@courierms.com",
-      phone: "+977 9800000011",
-      status: "Active",
-      parcels: 5,
-    },
-    {
-      id: "DRV-3002",
-      name: "Sita Rai",
-      email: "sita.rai@courierms.com",
-      phone: "+977 9800000012",
-      status: "Busy",
-      parcels: 12,
-    },
-    {
-      id: "DRV-3003",
-      name: "Amit Kumar",
-      email: "amit.k@courierms.com",
-      phone: "+977 9800000013",
-      status: "Inactive",
-      parcels: 0,
-    },
-  ];
+  const [drivers, setDrivers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDrivers();
+  }, []);
+
+  const fetchDrivers = async () => {
+    try {
+      const data = await getAllUsers();
+      setDrivers(data.filter(u => u.role === "driver"));
+    } catch (error) {
+      toast.error("Failed to fetch drivers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this driver? All associated delivery logs will remain for record parity.")) {
+      try {
+        await deleteUser(id);
+        toast.success("Driver deleted successfully");
+        setDrivers(drivers.filter(d => d._id !== id));
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to delete driver");
+      }
+    }
+  };
+
+  const filteredDrivers = drivers.filter(d => 
+    d.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    d.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -44,70 +55,89 @@ const ManageDrivers = () => {
                <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Fleet Management</h1>
                <p className="text-gray-500 font-medium">Manage your delivery personnel and track their active workloads.</p>
             </div>
-            <div className="flex gap-3">
-               <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
-                 <HiOutlineFilter /> Filter
-               </button>
-               <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
-                 <HiOutlineDownload /> Export
-               </button>
+            <div className="w-full md:w-80">
+               <div className="relative group">
+                 <HiOutlineSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" />
+                 <input 
+                  type="text"
+                  placeholder="Search by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-sm shadow-sm"
+                 />
+               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-50 bg-gray-50/50">
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Active Load</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {drivers.map((driver, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50/50 transition-colors group">
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gray-100 rounded-[1.25rem] flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-all text-2xl">
-                             <HiOutlineTruck />
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-900 group-hover:text-primary transition-colors italic uppercase tracking-tighter">{driver.name}</p>
-                            <p className="text-xs text-gray-400 font-medium uppercase font-black">{driver.id}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6">
-                         <div className="flex flex-col gap-1 text-xs font-bold text-gray-500">
-                           <span className="flex items-center gap-2"><HiOutlineMail className="text-primary" /> {driver.email}</span>
-                           <span className="flex items-center gap-2"><HiOutlinePhone className="text-primary" /> {driver.phone}</span>
-                         </div>
-                      </td>
-                      <td className="px-8 py-6">
-                         <div className="flex items-center gap-2">
-                            <span className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary text-xs font-black italic">{driver.parcels}</span>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Parcels</span>
-                         </div>
-                      </td>
-                      <td className="px-8 py-6">
-                        <StatusBadge status={driver.status} />
-                      </td>
-                      <td className="px-8 py-6 text-right">
-                         <div className="flex justify-end gap-2">
-                           <button className="px-4 py-2 bg-gray-50 text-gray-900 text-[10px] font-black uppercase rounded-xl hover:bg-primary hover:text-white transition-all">Details</button>
-                           <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-900">
-                             <HiOutlineDotsVertical />
-                           </button>
-                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
+             {loading ? (
+                <div className="flex items-center justify-center h-[400px]">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : filteredDrivers.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[400px] text-gray-400">
+                  <HiOutlineTruck className="text-6xl mb-4" />
+                  <p className="font-bold text-lg">{searchTerm ? "No results found" : "No drivers found in fleet"}</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-gray-50 bg-gray-50/50">
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact Details</th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Joined Date</th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {filteredDrivers.map((driver) => (
+                        <tr key={driver._id} className="hover:bg-gray-50/50 transition-colors group">
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-[1.25rem] overflow-hidden border-2 border-gray-100 flex items-center justify-center text-gray-400 group-hover:border-primary transition-all">
+                                 {driver.profilePic ? (
+                                   <img src={driver.profilePic} alt={driver.name} className="w-full h-full object-cover" />
+                                 ) : (
+                                   <HiOutlineTruck className="text-2xl" />
+                                 )}
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-900 group-hover:text-primary transition-colors italic uppercase tracking-tighter">{driver.name}</p>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{driver.role}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                             <div className="flex items-center gap-2 text-xs font-bold text-gray-500 italic">
+                                <HiOutlineMail className="text-primary text-sm" /> {driver.email}
+                             </div>
+                          </td>
+                          <td className="px-8 py-6 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            {new Date(driver.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-8 py-6">
+                            <StatusBadge status="Active" />
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                             <div className="flex justify-end gap-3">
+                               <button className="px-4 py-2 bg-gray-50 text-gray-900 text-[10px] font-black uppercase rounded-xl hover:bg-primary hover:text-white transition-all">Details</button>
+                               <button 
+                                onClick={() => handleDelete(driver._id)}
+                                className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                title="Delete Driver"
+                               >
+                                 <HiOutlineTrash className="text-xl" />
+                               </button>
+                             </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
           </div>
         </main>
       </div>
@@ -115,18 +145,10 @@ const ManageDrivers = () => {
   );
 };
 
-const StatusBadge = ({ status }) => {
-  const styles = {
-    'Active': 'bg-green-50 text-green-600 border-green-100',
-    'Busy': 'bg-orange-50 text-orange-600 border-orange-100',
-    'Inactive': 'bg-red-50 text-red-600 border-red-100'
-  }[status] || 'bg-gray-50 text-gray-600 border-gray-100';
-
-  return (
-    <span className={`px-4 py-1.5 rounded-full border text-[11px] font-black uppercase tracking-widest ${styles}`}>
-      {status}
-    </span>
-  );
-};
+const StatusBadge = ({ status }) => (
+  <span className="px-4 py-1.5 rounded-full border bg-green-50 text-green-600 border-green-100 text-[10px] font-black uppercase tracking-widest">
+    {status}
+  </span>
+);
 
 export default ManageDrivers;

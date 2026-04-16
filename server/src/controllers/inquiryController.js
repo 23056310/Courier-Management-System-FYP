@@ -70,9 +70,9 @@ export const respondInquiry = async (req, res) => {
 
     // Send mail
     await transporter.sendMail({
-      from: `"Hostel Booking" <${process.env.EMAIL_USER}>`,
+      from: `"Courier Management System" <${process.env.EMAIL_USER}>`,
       to: inquiry.email,
-      subject: inquiry.subject,
+      subject: `RE: ${inquiry.subject}`,
       text: message,
     });
 

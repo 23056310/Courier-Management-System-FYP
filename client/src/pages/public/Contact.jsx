@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   HiOutlineMail, 
   HiOutlinePhone, 
@@ -7,8 +7,36 @@ import {
 } from "react-icons/hi";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { submitInquiry } from "../../services/inquiryService";
+import { toast } from "react-hot-toast";
+
+import { useSettings } from "../../context/SettingsContext";
 
 const Contact = () => {
+  const { settings } = useSettings();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: ""
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await submitInquiry(formData);
+      toast.success("Inquiry submitted! Our team will contact you soon.");
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to submit inquiry");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="overflow-x-hidden pt-24 bg-gray-50">
       <Navbar />
@@ -40,17 +68,17 @@ const Contact = () => {
                 <ContactInfoItem 
                   icon={<HiOutlineLocationMarker />}
                   title="Main Headquarters"
-                  text="New Baneshwor, Kathmandu, Nepal"
+                  text={settings.siteAddress || "New Baneshwor, Kathmandu, Nepal"}
                 />
                 <ContactInfoItem 
                   icon={<HiOutlinePhone />}
                   title="Direct Support Line"
-                  text="+977-9800000000"
+                  text={settings.sitePhone || "+977-9800000000"}
                 />
                 <ContactInfoItem 
                   icon={<HiOutlineMail />}
                   title="Official Email"
-                  text="support@courierms.com"
+                  text={settings.siteEmail || "support@courierms.com"}
                 />
                 <ContactInfoItem 
                   icon={<HiOutlineClock />}
@@ -72,27 +100,72 @@ const Contact = () => {
           {/* CONTACT FORM */}
           <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 md:p-12 shadow-sm">
             <h3 className="text-2xl font-black mb-8 italic">Send Us a <span className="text-primary">Message.</span></h3>
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
-                  <input type="text" placeholder="John Doe" className="input-field" />
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="John Doe" 
+                    className="input-field"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Email Address</label>
-                  <input type="email" placeholder="john@example.com" className="input-field" />
+                  <input 
+                    type="email" 
+                    required
+                    placeholder="john@example.com" 
+                    className="input-field" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Phone Number</label>
+                  <input 
+                    type="tel" 
+                    required
+                    placeholder="+977-98..." 
+                    className="input-field"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Subject</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="How can we help?" 
+                    className="input-field" 
+                    value={formData.subject}
+                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Subject</label>
-                <input type="text" placeholder="How can we help?" className="input-field" />
-              </div>
-              <div>
                 <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Your Message</label>
-                <textarea rows="6" placeholder="Write your message here..." className="input-field resize-none"></textarea>
+                <textarea 
+                  rows="6" 
+                  required
+                  placeholder="Write your message here..." 
+                  className="input-field resize-none"
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                ></textarea>
               </div>
-              <button type="submit" className="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-lg active:scale-95">
-                Submit Inquiry
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-lg active:scale-95 disabled:opacity-50"
+              >
+                {loading ? "Submitting..." : "Submit Inquiry"}
               </button>
             </form>
           </div>

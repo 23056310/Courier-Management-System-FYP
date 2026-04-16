@@ -6,9 +6,7 @@ import { formatProfilePic } from '../utils/formatProfilePic';
 // Register user with profilePic
 // ==============================
 export const registerUser = async (data) => {
-  const response = await api.post('/auth/register', data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  });
+  const response = await api.post('/auth/register', data);
 
   return {
     ...response.data,
@@ -50,9 +48,7 @@ export const getProfile = async () => {
 // Update Profile
 // ==============================
 export const updateProfile = async (data) => {
-  const response = await api.put('/auth/profile', data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  });
+  const response = await api.put('/auth/profile', data);
 
   return {
     ...response.data,

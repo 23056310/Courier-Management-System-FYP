@@ -13,6 +13,7 @@ import {
   HiOutlineUserCircle
 } from "react-icons/hi";
 import { AuthContext } from "../context/AuthContext"; 
+import { toast } from "react-hot-toast";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -26,6 +27,7 @@ export default function Sidebar() {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (confirmLogout) {
       logout();
+      toast.success("Logged out successfully");
       navigate("/login");
     }
   };

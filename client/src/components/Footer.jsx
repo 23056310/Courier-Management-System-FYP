@@ -2,25 +2,30 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTwitter } from "react-icons/fa";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
+import { useSettings } from "../context/SettingsContext";
 
 const Footer = () => {
+  const { settings } = useSettings();
+
+  const siteName = settings?.siteName || "CourierMS";
+  const mainPart = siteName.substring(0, siteName.length - 2);
+  const accentPart = siteName.substring(siteName.length - 2);
+
   return (
-    <footer className="bg-white border-t border-gray-100 pt-20">
+    <footer className="bg-white border-t border-gray-100 pt-10">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
         {/* LOGO + DESCRIPTION */}
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center space-x-3 group mb-8">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:rotate-6 transition-transform overflow-hidden">
-
-            <img
-              src="/default-avatar.png"
-              alt="Courier MS Logo"
-              className="w-full h-full object-cover"
-            />
-
-          </div>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:rotate-6 transition-transform overflow-hidden">
+              <img
+                src={settings.siteLogo || "/default-avatar.png"}
+                alt={`${siteName} Logo`}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <h2 className="text-gray-900 font-bold text-2xl tracking-tight">
-              Courier<span className="text-primary italic">MS</span>
+              {mainPart}<span className="text-primary italic">{accentPart}</span>
             </h2>
           </Link>
           <p className="text-gray-500 text-sm leading-relaxed mb-8">
@@ -28,10 +33,10 @@ const Footer = () => {
             global reach. Your trusted partner for seamless deliveries.
           </p>
           <div className="flex space-x-3">
-            <SocialIcon icon={<FaFacebookF />} color="hover:bg-blue-600" />
-            <SocialIcon icon={<FaTwitter />} color="hover:bg-sky-500" />
-            <SocialIcon icon={<FaInstagram />} color="hover:bg-pink-600" />
-            <SocialIcon icon={<FaLinkedinIn />} color="hover:bg-blue-700" />
+            <SocialIcon icon={<FaFacebookF />} url={settings.facebook} color="hover:bg-blue-600" />
+            <SocialIcon icon={<FaTwitter />} url={settings.twitter} color="hover:bg-sky-500" />
+            <SocialIcon icon={<FaInstagram />} url={settings.instagram} color="hover:bg-pink-600" />
+            <SocialIcon icon={<FaLinkedinIn />} url={settings.linkedin} color="hover:bg-blue-700" />
           </div>
         </div>
 
@@ -63,23 +68,23 @@ const Footer = () => {
           <div className="space-y-4">
             <ContactItem 
               icon={<HiOutlinePhone />} 
-              text="+977-9800000000" 
+              text={settings.sitePhone || "+977-9800000000"} 
             />
             <ContactItem 
               icon={<HiOutlineMail />} 
-              text="support@courierms.com" 
+              text={settings.siteEmail || "support@courierms.com"} 
             />
             <ContactItem 
               icon={<HiOutlineLocationMarker />} 
-              text="New Baneshwor, Kathmandu" 
+              text={settings.siteAddress || "New Baneshwor, Kathmandu"} 
             />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 mt-20 border-t border-gray-100 py-10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500 font-medium">
-        <p className="order-2 md:order-1">
-          © 2026 <span className="text-gray-900 font-bold">Courier Management System</span>. All rights reserved.
+      <div className="max-w-7xl mx-auto px-6 mt-5 border-t border-gray-100 py-10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500 font-medium">
+        <p className="order-2 md:order-1 text-center md:text-left">
+          {settings.footerText || `© 2026 ${siteName}. All rights reserved.`}
         </p>
         <div className="flex space-x-8 order-1 md:order-2">
           <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
@@ -99,8 +104,13 @@ const FooterLink = ({ to, children }) => (
   </li>
 );
 
-const SocialIcon = ({ icon, color }) => (
-  <a href="#" className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 transition-all duration-300 hover:text-white ${color} hover:-translate-y-1`}>
+const SocialIcon = ({ icon, color, url = "#" }) => (
+  <a 
+    href={url} 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className={`w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 transition-all duration-300 hover:text-white ${color} hover:-translate-y-1`}
+  >
     <span className="text-base">{icon}</span>
   </a>
 );

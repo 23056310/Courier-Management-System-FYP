@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { HiOutlineLockClosed, HiArrowRight, HiOutlineShieldCheck } from "react-icons/hi";
+import { resetPassword } from "../../services/authService";
+import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { useSettings } from "../../context/SettingsContext";
 
 const ResetPassword = () => {
+  const { settings } = useSettings();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -17,24 +21,29 @@ const ResetPassword = () => {
 
   useEffect(() => {
     if (!token) {
-      setError("Security token is missing. Please request a new reset link.");
+      setErrorMsg("Security token is missing. Please request a new reset link.");
     }
   }, [token]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
-    setError("");
+    setErrorMsg("");
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      await resetPassword({ token, newPassword: password });
+      toast.success("Password reset successful!");
       setSubmitted(true);
       setTimeout(() => navigate("/login"), 3000);
-    }, 1500);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reset password.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,8 +56,8 @@ const ResetPassword = () => {
           <div className="text-center mb-10">
             <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold italic mb-6 shadow-lg shadow-primary/20 overflow-hidden">
               <img
-                src="/default-avatar.png"
-                alt="Courier MS Logo"
+                src={settings?.siteLogo || "/default-avatar.png"}
+                alt={`${settings?.siteName || "CourierMS"} Logo`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -69,9 +78,9 @@ const ResetPassword = () => {
             )}
           </div>
 
-          {error && (
+          {errorMsg && (
             <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-bold text-center border border-red-100 italic">
-              {error}
+              {errorMsg}
             </div>
           )}
 
@@ -103,7 +112,7 @@ const ResetPassword = () => {
 
               <button 
                 type="submit" 
-                disabled={loading || !!error}
+                disabled={loading || !!errorMsg}
                 className="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {loading ? "Updating..." : "Update Password"}

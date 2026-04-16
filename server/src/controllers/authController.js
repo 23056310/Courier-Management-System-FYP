@@ -8,40 +8,63 @@ import { generateToken } from "../utils/generateToken.js";
 ================================ */
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    console.log("--- REGISTRATION START ---");
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
+    console.log("Hashing password...");
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Password hashed.");
 
     const userData = {
       name,
       email,
       password: hashedPassword,
+      role: role || 'customer'
     };
 
     if (req.file) {
       userData.profilePic = req.file.path.replace(/\\/g, "/");
     }
 
+    console.log("Creating user in DB...");
     const user = await User.create(userData);
+    console.log("User created successfully:", user._id);
+
+    const token = generateToken(user._id);
+    console.log("Token generated.");
 
     res.status(201).json({
       message: "User registered successfully",
-      token: generateToken(user._id),
+      token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role, // default: student
+        role: user.role,
         profilePic: user.profilePic,
       },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("DEBUG: Registration error detail:", error);
+    res.status(500).json({ 
+      message: "Internal Server Error during registration",
+      error: error.message,
+      stack: error.stack,
+      requestBody: req.body,
+      requestFile: req.file
+    });
   }
 };
 

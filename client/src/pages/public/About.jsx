@@ -2,8 +2,12 @@ import React from "react";
 import { HiOutlineUserGroup, HiOutlineLightBulb, HiOutlineBadgeCheck } from "react-icons/hi";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { useSettings } from "../../context/SettingsContext";
 
 const About = () => {
+  const { settings } = useSettings();
+  const siteName = settings?.siteName || "CourierMS";
+
   return (
     <div className="overflow-x-hidden">
       <Navbar />
@@ -20,7 +24,7 @@ const About = () => {
               <span className="text-primary italic">Connections.</span>
             </h1>
             <p className="text-lg text-gray-500 max-w-xl leading-relaxed">
-              We started with a simple goal: to make logistics effortless. Today, 
+              {siteName} started with a simple goal: to make logistics effortless. Today, 
               we are a leading platform connecting thousands of businesses and individuals 
               through a smart, reliable, and secure courier network.
             </p>
@@ -29,7 +33,7 @@ const About = () => {
             <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl -z-10" />
             <img 
               src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=800" 
-              alt="Our Team" 
+              alt={`${siteName} Team`} 
               className="rounded-3xl shadow-2xl"
             />
           </div>
@@ -61,7 +65,7 @@ const About = () => {
       <section className="bg-gray-900 py-24 px-6 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
           <div>
-            <h2 className="text-4xl font-bold mb-12">Our Core Ideologies</h2>
+            <h2 className="text-4xl font-bold mb-12 uppercase italic tracking-tighter">Our Core Ideologies</h2>
             <div className="space-y-12">
               <div>
                 <h3 className="text-2xl font-bold mb-4 text-primary">Our Mission</h3>
@@ -87,10 +91,10 @@ const About = () => {
                   the world forward through data and dedication."
                 </p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary rounded-full" />
+                  <div className="w-12 h-12 bg-primary rounded-full shadow-lg shadow-primary/20" />
                   <div>
-                    <p className="font-bold">Project Team</p>
-                    <p className="text-sm text-gray-500">CMS Founders</p>
+                    <p className="font-bold flex items-center gap-2">{siteName} Founders <span className="text-[10px] px-2 py-0.5 bg-primary/20 text-primary rounded-full">Core Team</span></p>
+                    <p className="text-sm text-gray-500 uppercase font-black tracking-widest">Global Logistics Leaders</p>
                   </div>
                 </div>
               </div>
@@ -101,22 +105,22 @@ const About = () => {
 
       {/* TEAM SECTION MOCKUP */}
       <section className="py-24 px-6 max-w-7xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-16">The Minds Behind CMS</h2>
+        <h2 className="text-4xl font-bold mb-16 uppercase italic">The Minds Behind {siteName}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {[1, 2, 3, 4].map((i) => (
             <div 
               key={i}
               className="group"
             >
-              <div className="aspect-square bg-gray-100 rounded-3xl mb-6 overflow-hidden relative">
+              <div className="aspect-square bg-gray-100 rounded-[2.5rem] mb-6 overflow-hidden relative border border-gray-100 shadow-sm transition-all group-hover:shadow-2xl">
                 <img 
-                  src={`https://i.pravatar.cc/300?img=${i + 10}`} 
+                  src={`https://i.pravatar.cc/300?img=${i + 15}`} 
                   alt="Team Member" 
-                  className="w-full h-full object-cover grayscale transition-all group-hover:grayscale-0 group-hover:scale-110"
+                  className="w-full h-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:scale-110"
                 />
               </div>
-              <h4 className="font-bold text-lg">Member {i}</h4>
-              <p className="text-sm text-gray-500">Core Developer</p>
+              <h4 className="font-black text-lg text-gray-900 group-hover:text-primary transition-colors tracking-tighter uppercase italic">Lead {i === 1 ? 'Architect' : i === 2 ? 'Security' : i === 3 ? 'Operations' : 'Dev'}</h4>
+              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">{siteName} Core Team</p>
             </div>
           ))}
         </div>
