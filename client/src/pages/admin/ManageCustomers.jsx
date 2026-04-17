@@ -122,7 +122,6 @@ const ManageCustomers = () => {
                         </td>
                         <td className="px-8 py-6 text-right">
                            <div className="flex justify-end gap-3">
-                             <button className="px-4 py-2 bg-gray-50 text-gray-900 text-[10px] font-black uppercase rounded-xl hover:bg-primary hover:text-white transition-all">Profile</button>
                              <button 
                               onClick={() => handleDelete(customer._id)}
                               className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"

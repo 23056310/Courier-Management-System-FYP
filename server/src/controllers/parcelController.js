@@ -97,7 +97,7 @@ export const assignDriver = async (req, res) => {
 
     const parcel = await Parcel.findByIdAndUpdate(
       req.params.id,
-      { assignedDriver: driverId, status: 'Picked Up' },
+      { assignedDriver: driverId },
       { new: true }
     ).populate('assignedDriver', 'name email profilePic');
 

@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 
 const NEXT_STATUS = {
   "Pending":          { label: "Pick Up",     next: "Picked Up",        color: "bg-primary shadow-primary/20" },
+  "Approved":         { label: "Pick Up",     next: "Picked Up",        color: "bg-primary shadow-primary/20" },
   "Picked Up":        { label: "In Transit",  next: "In Transit",       color: "bg-orange-500 shadow-orange-500/20" },
   "In Transit":       { label: "Out for Del.", next: "Out for Delivery", color: "bg-purple-500 shadow-purple-500/20" },
   "Out for Delivery": { label: "Deliver",     next: "Delivered",        color: "bg-green-500 shadow-green-500/20" },
@@ -56,6 +57,17 @@ const MyParcels = () => {
     }
   };
 
+  const exportDriverCSV = () => {
+    const header = "Tracking Number,Recipient,Address,Status,Last Update\n";
+    const data = parcels.map(p => `${p.trackingNumber},"${p.recipient?.name}","${p.recipient?.address}",${p.status},"${new Date(p.updatedAt).toLocaleString()}"`).join("\n");
+    const blob = new Blob([header + data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my_deliveries.csv';
+    a.click();
+  };
+
   const activeParcels = parcels.filter(p => p.status !== "Delivered" && p.status !== "Cancelled");
   const completedParcels = parcels.filter(p => p.status === "Delivered");
 
@@ -78,7 +90,7 @@ const MyParcels = () => {
               <button onClick={fetchParcels} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineRefresh /> Refresh
               </button>
-              <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+              <button onClick={exportDriverCSV} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineDownload /> Export
               </button>
             </div>
@@ -108,9 +120,10 @@ const MyParcels = () => {
                       <thead>
                         <tr className="border-b border-gray-50 bg-gray-50/50">
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Parcel</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Sender</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Receiver</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Address</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Last Update</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Action</th>
                         </tr>
                       </thead>
@@ -133,14 +146,21 @@ const MyParcels = () => {
                                 </div>
                               </td>
                               <td className="px-8 py-6">
-                                <p className="font-bold text-gray-700 text-sm">{parcel.recipient?.name}</p>
-                                <p className="text-xs text-gray-400">{parcel.recipient?.phone}</p>
+                                <p className="font-bold text-gray-700 text-sm truncate max-w-[150px]">{parcel.sender?.name}</p>
+                                <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{parcel.sender?.address}</p>
+                                <p className="text-[10px] text-gray-400 font-bold">{parcel.sender?.phone}</p>
                               </td>
-                              <td className="px-8 py-6 text-sm text-gray-500 font-medium max-w-[180px] truncate">
-                                {parcel.recipient?.address}
+                              <td className="px-8 py-6">
+                                <p className="font-bold text-gray-700 text-sm truncate max-w-[150px]">{parcel.recipient?.name}</p>
+                                <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{parcel.recipient?.address}</p>
+                                <p className="text-[10px] text-gray-400 font-bold">{parcel.recipient?.phone}</p>
                               </td>
                               <td className="px-8 py-6">
                                 <StatusBadge status={parcel.status} />
+                              </td>
+                              <td className="px-8 py-6 text-sm font-bold text-gray-700 italic">
+                                <span>{new Date(parcel.updatedAt).toLocaleDateString()}</span>
+                                <span className="block text-[10px] font-medium text-gray-400 mt-0.5">{new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                               </td>
                               <td className="px-8 py-6 text-right">
                                 <div className="flex justify-end items-center gap-2">
@@ -176,9 +196,10 @@ const MyParcels = () => {
                       <thead>
                         <tr className="border-b border-gray-50 bg-gray-50/50">
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Parcel</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Sender</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Receiver</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Date</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Date Delivered</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -186,12 +207,20 @@ const MyParcels = () => {
                           <tr key={parcel._id} className="hover:bg-gray-50/50 transition-colors opacity-70">
                             <td className="px-8 py-5">
                               <p className="font-bold text-gray-700 text-sm">#{parcel.trackingNumber}</p>
-                              <p className="text-xs text-gray-400">{parcel.parcelDetails?.type}</p>
+                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{parcel.parcelDetails?.type}</p>
                             </td>
-                            <td className="px-8 py-5 text-sm text-gray-500 font-medium">{parcel.recipient?.name}</td>
+                            <td className="px-8 py-5">
+                               <p className="text-sm font-bold text-gray-600 truncate max-w-[150px]">{parcel.sender?.name}</p>
+                               <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{parcel.sender?.address}</p>
+                            </td>
+                            <td className="px-8 py-5">
+                               <p className="text-sm font-bold text-gray-600 truncate max-w-[150px]">{parcel.recipient?.name}</p>
+                               <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{parcel.recipient?.address}</p>
+                            </td>
                             <td className="px-8 py-5"><StatusBadge status={parcel.status} /></td>
-                            <td className="px-8 py-5 text-xs font-bold text-gray-500 italic">
-                              {new Date(parcel.updatedAt).toLocaleDateString()}
+                            <td className="px-8 py-5 font-bold text-gray-500 italic">
+                               <span className="text-xs">{new Date(parcel.updatedAt).toLocaleDateString()}</span>
+                               <span className="block text-[10px] font-medium text-gray-400 mt-0.5">{new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                             </td>
                           </tr>
                         ))}
@@ -240,6 +269,7 @@ const MyParcels = () => {
 const StatusBadge = ({ status }) => {
   const styles = {
     "Pending":          "bg-gray-50 text-gray-500 border-gray-100",
+    "Approved":         "bg-teal-50 text-teal-600 border-teal-100",
     "Picked Up":        "bg-blue-50 text-blue-600 border-blue-100",
     "In Transit":       "bg-orange-50 text-orange-600 border-orange-100",
     "Out for Delivery": "bg-purple-50 text-purple-600 border-purple-100",

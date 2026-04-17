@@ -8,9 +8,9 @@ import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 import { trackParcelByNumber } from "../../services/parcelService";
 import { toast } from "react-hot-toast";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
-const STATUS_STEPS = ["Pending", "Picked Up", "In Transit", "Out for Delivery", "Delivered"];
+const STATUS_STEPS = ["Pending", "Approved", "Picked Up", "In Transit", "Out for Delivery", "Delivered"];
 
 const TrackParcel = () => {
   const [trackingId, setTrackingId] = useState("");
@@ -61,7 +61,7 @@ const TrackParcel = () => {
   const currentStepIndex = result ? STATUS_STEPS.indexOf(result.status) : -1;
 
   const stepIcons = [
-    <HiOutlineCube />, <HiOutlineTruck />, <HiOutlineTruck />,
+    <HiOutlineCube />, <HiOutlineCheckCircle />, <HiOutlineTruck />, <HiOutlineTruck />,
     <HiOutlineHome />, <HiOutlineCheckCircle />
   ];
 
@@ -194,9 +194,10 @@ const TrackParcel = () => {
                   <div className="p-8 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
                     <h4 className="font-black text-gray-900 mb-6 uppercase tracking-widest text-[10px]">Shipment Info</h4>
                     <div className="space-y-3">
-                      <InfoRow label="From" value={result.sender?.name || "—"} />
-                      <InfoRow label="To" value={result.recipient?.name || "—"} />
+                      <InfoRow label="From" value={result.sender ? `${result.sender.name} - ${result.sender.address}` : "—"} />
+                      <InfoRow label="To" value={result.recipient ? `${result.recipient.name} - ${result.recipient.address}` : "—"} />
                       <InfoRow label="Type" value={result.parcelDetails?.type || "—"} />
+                      <InfoRow label="Last Update" value={`${new Date(result.updatedAt).toLocaleDateString()} ${new Date(result.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`} />
                       <InfoRow label="Weight" value={result.parcelDetails?.weight ? `${result.parcelDetails.weight} kg` : "—"} />
                       {result.assignedDriver && <InfoRow label="Driver" value={result.assignedDriver.name} />}
                     </div>
@@ -204,9 +205,11 @@ const TrackParcel = () => {
                   <div className="p-8 bg-gray-900 rounded-[2rem] flex flex-col justify-center items-center text-center gap-4">
                     <p className="text-gray-400 text-sm font-bold italic">Need help with this shipment?</p>
                     <p className="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Our support team is here 24/7</p>
-                    <button className="mt-2 px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-primary transition-all">
-                      Send Inquiry
-                    </button>
+                    <Link to="/contact">
+                      <button className="mt-2 px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-primary transition-all">
+                        Send Inquiry
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -248,6 +251,7 @@ const InfoRow = ({ label, value }) => (
 
 const statusColor = (status) => ({
   "Pending":          "bg-primary/5 text-primary border-primary/10",
+  "Approved":         "bg-teal-50 text-teal-600 border-teal-100",
   "Picked Up":        "bg-blue-50 text-blue-600 border-blue-100",
   "In Transit":       "bg-orange-50 text-orange-600 border-orange-100",
   "Out for Delivery": "bg-purple-50 text-purple-600 border-purple-100",

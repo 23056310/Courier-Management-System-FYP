@@ -40,7 +40,18 @@ const ParcelHistory = () => {
     return matchSearch && matchStatus;
   });
 
-  const statuses = ["All", "Pending", "Picked Up", "In Transit", "Out for Delivery", "Delivered", "Cancelled"];
+  const statuses = ["All", "Pending", "Approved", "Picked Up", "In Transit", "Out for Delivery", "Delivered", "Cancelled"];
+
+  const exportCustomerCSV = () => {
+    const header = "Tracking Number,Recipient,Type,Status,Date\n";
+    const data = filtered.map(p => `${p.trackingNumber},"${p.recipient?.name}",${p.parcelDetails?.type},${p.status},"${new Date(p.createdAt).toLocaleString()}"`).join("\n");
+    const blob = new Blob([header + data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my_parcel_history.csv';
+    a.click();
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -59,7 +70,7 @@ const ParcelHistory = () => {
               <button onClick={fetchParcels} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineRefresh /> Refresh
               </button>
-              <button className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+              <button onClick={exportCustomerCSV} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineDownload /> Export
               </button>
               <button
@@ -123,10 +134,10 @@ const ParcelHistory = () => {
                   <thead>
                     <tr className="border-b border-gray-50 bg-gray-50/50">
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Tracking</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Sender</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Recipient</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Type</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Date</th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Last Update</th>
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Track</th>
                     </tr>
                   </thead>
@@ -147,13 +158,17 @@ const ParcelHistory = () => {
                           </div>
                         </td>
                         <td className="px-8 py-6">
+                          <p className="font-bold text-gray-700 text-sm">{parcel.sender?.name}</p>
+                          <p className="text-xs text-gray-400 truncate max-w-[150px]">{parcel.sender?.address}</p>
+                        </td>
+                        <td className="px-8 py-6">
                           <p className="font-bold text-gray-700 text-sm">{parcel.recipient?.name}</p>
                           <p className="text-xs text-gray-400 truncate max-w-[150px]">{parcel.recipient?.address}</p>
                         </td>
-                        <td className="px-8 py-6 text-sm text-gray-500 font-bold">{parcel.parcelDetails?.type}</td>
                         <td className="px-8 py-6"><StatusBadge status={parcel.status} /></td>
                         <td className="px-8 py-6 text-sm font-bold text-gray-700 italic">
-                          {new Date(parcel.createdAt).toLocaleDateString()}
+                          <span>{new Date(parcel.updatedAt).toLocaleDateString()}</span>
+                          <span className="block text-xs font-medium text-gray-400">{new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </td>
                         <td className="px-8 py-6 text-right">
                           <button
@@ -184,6 +199,7 @@ const ParcelHistory = () => {
 const StatusBadge = ({ status }) => {
   const styles = {
     "Pending":          "bg-gray-50 text-gray-500 border-gray-100",
+    "Approved":         "bg-teal-50 text-teal-600 border-teal-100",
     "Picked Up":        "bg-blue-50 text-blue-600 border-blue-100",
     "In Transit":       "bg-orange-50 text-orange-600 border-orange-100",
     "Out for Delivery": "bg-purple-50 text-purple-600 border-purple-100",

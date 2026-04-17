@@ -30,7 +30,7 @@ const parcelSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered', 'Cancelled'],
+    enum: ['Pending', 'Approved', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered', 'Cancelled'],
     default: 'Pending'
   },
   assignedDriver: {
@@ -57,12 +57,11 @@ const parcelSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// Generate a random tracking number before saving
-parcelSchema.pre('save', async function(next) {
+// Generate a random tracking number before validation
+parcelSchema.pre('validate', function() {
   if (!this.trackingNumber) {
     this.trackingNumber = 'TRK' + Math.random().toString(36).substr(2, 9).toUpperCase();
   }
-  next();
 });
 
 const Parcel = mongoose.model('Parcel', parcelSchema);

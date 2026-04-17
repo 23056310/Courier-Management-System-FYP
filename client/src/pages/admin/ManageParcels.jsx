@@ -23,6 +23,7 @@ import {
   assignDriver 
 } from "../../services/parcelService";
 import { getAllUsers } from "../../services/authService";
+import { formatProfilePic } from "../../utils/formatProfilePic";
 import { toast } from "react-hot-toast";
 
 const ManageParcels = () => {
@@ -140,6 +141,35 @@ const ManageParcels = () => {
     }
   };
 
+  const handleApprove = async (id) => {
+    try {
+      await updateParcel(id, { status: "Approved" });
+      toast.success("Request Approved");
+      fetchData();
+    } catch (e) { toast.error("Error approving request"); }
+  };
+
+  const handleReject = async (id) => {
+    if (window.confirm("Are you sure you want to cancel/reject this request?")) {
+      try {
+        await updateParcel(id, { status: "Cancelled" });
+        toast.success("Request Cancelled");
+        fetchData();
+      } catch (e) { toast.error("Error cancelling request"); }
+    }
+  };
+
+  const exportAdminCSV = () => {
+    const header = "Tracking Number,Sender,Recipient,Status,UpdatedAt\n";
+    const data = filteredParcels.map(p => `${p.trackingNumber},"${p.sender.name}","${p.recipient.name}",${p.status},"${new Date(p.updatedAt).toLocaleString()}"`).join("\n");
+    const blob = new Blob([header + data], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'admin_parcels.csv';
+    a.click();
+  };
+
   const filteredParcels = parcels.filter(p => {
     const matchesSearch = p.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           p.sender.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -173,6 +203,12 @@ const ManageParcels = () => {
                   className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-medium text-sm shadow-sm"
                  />
                </div>
+               <button 
+                onClick={exportAdminCSV}
+                className="flex items-center gap-2 px-6 py-4 bg-white border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-gray-700 hover:bg-gray-50 transition-all text-[10px] shadow-sm whitespace-nowrap"
+               >
+                 Export CSV
+               </button>
                <button 
                 onClick={handleOpenCreate}
                 className="flex items-center gap-2 px-6 py-4 bg-gray-900 border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-white hover:bg-primary transition-all text-[10px] shadow-xl whitespace-nowrap"
@@ -216,27 +252,40 @@ const ManageParcels = () => {
                             <div>
                               <p className="font-bold text-gray-900 group-hover:text-primary transition-colors text-sm uppercase tracking-tighter">#{parcel.trackingNumber}</p>
                               <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{parcel.parcelDetails.type}</p>
+                              <p className="text-[9px] text-gray-400 italic mt-1">
+                                {new Date(parcel.updatedAt).toLocaleDateString()} · {new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-8 py-6">
-                           <div className="space-y-1">
-                             <div className="flex items-center gap-2 text-xs font-bold text-gray-700 italic">
-                               <span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> {parcel.sender.name}
+                           <div className="space-y-3">
+                             <div>
+                               <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> {parcel.sender?.name}
+                               </div>
+                               <p className="pl-3.5 text-[9px] text-gray-400 uppercase tracking-widest">{parcel.sender?.address}</p>
                              </div>
-                             <div className="flex items-center gap-2 text-xs font-bold text-gray-400 italic">
-                               <span className="w-1.5 h-1.5 bg-red-400 rounded-full" /> {parcel.recipient.name}
+                             <div>
+                               <div className="flex items-center gap-2 text-xs font-bold text-gray-400">
+                                 <span className="w-1.5 h-1.5 bg-red-400 rounded-full" /> {parcel.recipient?.name}
+                               </div>
+                               <p className="pl-3.5 text-[9px] text-gray-400 uppercase tracking-widest">{parcel.recipient?.address}</p>
                              </div>
                            </div>
                         </td>
                         <td className="px-8 py-6">
                           <div 
-                            onClick={() => handleOpenAssign(parcel)}
-                            className="flex items-center gap-3 cursor-pointer group/driver hover:bg-gray-100 p-2 rounded-xl transition-all"
+                            onClick={() => ['Pending', 'Cancelled'].includes(parcel.status) ? toast.error('Action denied. Please approve the request first or it is cancelled.') : handleOpenAssign(parcel)}
+                            className={`flex items-center gap-3 group/driver p-2 rounded-xl transition-all ${['Pending', 'Cancelled'].includes(parcel.status) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-100'}`}
                           >
                             <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 overflow-hidden relative">
                                {parcel.assignedDriver ? (
-                                 <img src={parcel.assignedDriver.profilePic || "https://i.pravatar.cc/100"} className="w-full h-full object-cover" />
+                                 parcel.assignedDriver.profilePic ? (
+                                   <img src={formatProfilePic(parcel.assignedDriver.profilePic)} className="w-full h-full object-cover" />
+                                 ) : (
+                                   <HiOutlineUser className="text-gray-400" />
+                                 )
                                ) : (
                                  <HiOutlineTruck className="text-gray-400" />
                                )}
@@ -254,12 +303,22 @@ const ManageParcels = () => {
                           <StatusBadge status={parcel.status} />
                         </td>
                         <td className="px-8 py-6 text-right">
-                           <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                           <div className="flex justify-end gap-3 transition-opacity">
+                             {parcel.status === 'Pending' && (
+                               <>
+                                 <button onClick={() => handleApprove(parcel._id)} className="p-2.5 bg-green-50 text-green-600 hover:bg-green-500 hover:text-white rounded-xl border border-green-100 transition-all shadow-sm cursor-pointer" title="Approve">
+                                   <HiOutlineCheckCircle className="text-lg pointer-events-none" />
+                                 </button>
+                                 <button onClick={() => handleReject(parcel._id)} className="p-2.5 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-xl border border-red-100 transition-all shadow-sm cursor-pointer" title="Reject">
+                                   <HiOutlineX className="text-lg pointer-events-none" />
+                                 </button>
+                               </>
+                             )}
                              <button 
                               onClick={() => handleOpenEdit(parcel)}
-                              className="p-2.5 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm"
+                              className="p-2.5 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm cursor-pointer"
                              >
-                               <HiOutlinePencilAlt className="text-lg" />
+                               <HiOutlinePencilAlt className="text-lg pointer-events-none" />
                              </button>
                              <button 
                               onClick={() => handleDelete(parcel._id)}
@@ -295,7 +354,13 @@ const ManageParcels = () => {
                       onClick={() => handleAssignDriver(driver._id)}
                       className="flex items-center gap-4 p-5 bg-gray-50 rounded-[1.5rem] cursor-pointer hover:bg-primary hover:text-white transition-all group"
                      >
-                        <img src={driver.profilePic || "https://i.pravatar.cc/100"} className="w-12 h-12 rounded-2xl object-cover border-2 border-white group-hover:border-white/20 shadow-sm" />
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-white group-hover:border-white/20 shadow-sm bg-white text-gray-400">
+                          {driver.profilePic === "/default-avatar.png" ? (
+                            <HiOutlineUser className="text-2xl" />
+                          ) : (
+                            <img src={driver.profilePic} className="w-full h-full object-cover" />
+                          )}
+                        </div>
                         <div className="flex-1">
                           <p className="font-bold uppercase tracking-tighter italic text-sm">{driver.name}</p>
                           <p className="text-[10px] uppercase tracking-widest opacity-60 font-black">{driver.email}</p>
@@ -383,15 +448,6 @@ const ManageParcels = () => {
                           {['Document', 'Electronics', 'Clothing', 'Fragile', 'Other'].map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
                       </div>
-                      <div className="relative">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Cost ($)</label>
-                        <input 
-                          type="number" 
-                          value={formData.cost}
-                          onChange={(e) => setFormData({...formData, cost: e.target.value})}
-                          className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
-                        />
-                      </div>
                    </div>
 
                    <div className="md:col-span-2 pt-4">
@@ -440,6 +496,7 @@ const StatusBadge = ({ status }) => {
     'Pending': 'bg-primary/5 text-primary border-primary/10',
     'Cancelled': 'bg-red-50 text-red-600 border-red-100',
     'Picked Up': 'bg-blue-50 text-blue-600 border-blue-100',
+    'Approved': 'bg-teal-50 text-teal-600 border-teal-100',
     'Out for Delivery': 'bg-purple-50 text-purple-600 border-purple-100'
   }[status] || 'bg-gray-50 text-gray-500 border-gray-100';
 

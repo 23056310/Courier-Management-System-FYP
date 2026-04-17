@@ -6,7 +6,6 @@ import Home from "./pages/public/Home";
 import About from "./pages/public/About";
 import Services from "./pages/public/Services";
 import Contact from "./pages/public/Contact";
-import TrackParcel from "./pages/public/TrackParcel";
 
 /* AUTH */
 import Login from "./pages/auth/Login";
@@ -55,7 +54,6 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/services" element={<Services />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/track-parcel" element={<TrackParcel />} />
 
       {/* AUTH ROUTES */}
       <Route path="/login" element={<Login />} />
