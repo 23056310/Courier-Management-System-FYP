@@ -38,9 +38,14 @@ const parcelSchema = new mongoose.Schema({
     ref: 'User',
     default: null
   },
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
   cost: {
     type: Number,
-    required: true
+    default: 0
   },
   deliveryMethod: {
     type: String,

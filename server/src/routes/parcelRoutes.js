@@ -6,15 +6,32 @@ import {
   getParcelById, 
   updateParcel, 
   deleteParcel,
-  assignDriver
+  assignDriver,
+  customerCreateParcel,
+  getMyParcels,
+  trackParcel,
+  getDriverParcels,
+  updateParcelStatus
 } from '../controllers/parcelController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
-// All routes require authentication
+// ── PUBLIC ──────────────────────────────────────
+// Track parcel by tracking number (no login needed)
+router.get('/track/:trackingNumber', trackParcel);
+
+// ── PROTECTED ───────────────────────────────────
 router.use(protect);
 
-// Admin only routes for bulk management
+// ── CUSTOMER ────────────────────────────────────
+router.post('/customer/create', authorizeRoles('customer'), customerCreateParcel);
+router.get('/customer/my-parcels', authorizeRoles('customer'), getMyParcels);
+
+// ── DRIVER ──────────────────────────────────────
+router.get('/driver/assigned', authorizeRoles('driver'), getDriverParcels);
+router.patch('/:id/status', authorizeRoles('driver'), updateParcelStatus);
+
+// ── ADMIN ───────────────────────────────────────
 router.route('/')
   .post(authorizeRoles('admin'), createParcel)
   .get(authorizeRoles('admin'), getAllParcels);

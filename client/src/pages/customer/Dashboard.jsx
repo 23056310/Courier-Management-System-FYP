@@ -2,8 +2,10 @@ import React from "react";
 import { HiOutlineCube, HiOutlineCheckCircle, HiOutlineTruck, HiOutlineClock, HiOutlineChevronRight } from "react-icons/hi";
 import Topbar from "../../components/Topbar";
 import Sidebar from "../../components/Sidebar";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
       <Sidebar />
@@ -92,7 +94,9 @@ const Dashboard = () => {
                 <div className="relative z-10">
                    <h3 className="text-2xl font-bold mb-4 italic">Need to ship?</h3>
                    <p className="text-primary-100 text-sm mb-6 opacity-80 leading-relaxed">Book a new parcel in less than 2 minutes with our streamlined process.</p>
-                   <button className="w-full py-4 bg-white text-primary font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                   <button
+                     onClick={() => navigate("/customer/create-parcel")}
+                     className="w-full py-4 bg-white text-primary font-bold rounded-2xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
                      Book Parcel <HiOutlineChevronRight />
                    </button>
                 </div>

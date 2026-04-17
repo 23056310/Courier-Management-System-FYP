@@ -29,6 +29,8 @@ import Settings from "./pages/admin/Settings";
 /* CUSTOMER PAGES */
 import CustomerDashboard from "./pages/customer/Dashboard";
 import ParcelHistory from "./pages/customer/ParcelHistory";
+import CreateParcel from "./pages/customer/CreateParcel";
+import CustomerTrackParcel from "./pages/customer/TrackParcel";
 
 /* DRIVER PAGES */
 import DriverDashboard from "./pages/driver/Dashboard";
@@ -149,6 +151,22 @@ function App() {
         element={
           <ProtectedRoute roles={["customer"]}>
             <ParcelHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/create-parcel"
+        element={
+          <ProtectedRoute roles={["customer"]}>
+            <CreateParcel />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customer/track-parcel"
+        element={
+          <ProtectedRoute roles={["customer"]}>
+            <CustomerTrackParcel />
           </ProtectedRoute>
         }
       />

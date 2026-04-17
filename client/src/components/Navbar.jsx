@@ -30,7 +30,7 @@ const Navbar = () => {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
-    { name: "Track Parcel", path: "/track-parcel" },
+    { name: "Contact", path: "/contact" },
   ];
 
   const currentLinks = user ? authLinks : guestLinks;

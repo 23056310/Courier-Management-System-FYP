@@ -10,7 +10,8 @@ import {
   HiOutlineLogout,
   HiOutlineMenuAlt2,
   HiOutlineClock,
-  HiOutlineUserCircle
+  HiOutlineUserCircle,
+  HiOutlineSearch
 } from "react-icons/hi";
 import { AuthContext } from "../context/AuthContext"; 
 import { toast } from "react-hot-toast";
@@ -46,16 +47,16 @@ export default function Sidebar() {
     ],
 
     customer: [
-      { label: "Dashboard", icon: <HiOutlineChartBar />, to: "/dashboard" },
-      { label: "My Parcels", icon: <HiOutlineCube />, to: "/my-parcels" },
-      { label: "History", icon: <HiOutlineClock />, to: "/parcel-history" },
+      { label: "Dashboard", icon: <HiOutlineChartBar />, to: "/customer/dashboard" },
+      { label: "Create Parcel", icon: <HiOutlineClipboardList />, to: "/customer/create-parcel" },
+      { label: "My Parcels", icon: <HiOutlineCube />, to: "/customer/parcels" },
+      { label: "Track Parcel", icon: <HiOutlineSearch />, to: "/customer/track-parcel" },
       { label: "Profile", icon: <HiOutlineUserCircle />, to: "/profile" },
     ],
 
     driver: [
       { label: "Dashboard", icon: <HiOutlineChartBar />, to: "/driver/dashboard" },
-      { label: "My Deliveries", icon: <HiOutlineCube />, to: "/driver/parcels" },
-      { label: "History Log", icon: <HiOutlineClock />, to: "/driver/history" },
+      { label: "My Deliveries", icon: <HiOutlineCube />, to: "/driver/my-parcels" },
       { label: "Profile", icon: <HiOutlineUserCircle />, to: "/profile" },
     ],
   };
