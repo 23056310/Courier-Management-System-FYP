@@ -96,7 +96,7 @@ const ManageDrivers = () => {
                         <tr key={driver._id} className="hover:bg-gray-50/50 transition-colors group">
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 rounded-[1.25rem] overflow-hidden border-2 border-gray-100 flex items-center justify-center text-gray-400 group-hover:border-primary transition-all">
+                              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 flex items-center justify-center text-gray-400 group-hover:border-primary transition-all">
                                  {driver.profilePic ? (
                                    <img src={driver.profilePic} alt={driver.name} className="w-full h-full object-cover" />
                                  ) : (

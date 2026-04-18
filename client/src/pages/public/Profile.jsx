@@ -92,7 +92,7 @@ export default function Profile() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center sticky top-24">
               <div className="relative group mb-8">
-                <div className="w-48 h-48 rounded-[3rem] overflow-hidden border-8 border-gray-50 shadow-xl group-hover:scale-105 transition-all duration-500">
+                <div className="w-48 h-48 rounded-full overflow-hidden border-8 border-gray-50 shadow-xl group-hover:scale-105 transition-all duration-500">
                   <img src={displayProfilePic} alt="Profile" className="w-full h-full object-cover" />
                 </div>
                 {isEditing && (

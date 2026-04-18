@@ -360,7 +360,7 @@ const ManageParcels = () => {
                       onClick={() => handleAssignDriver(driver._id)}
                       className="flex items-center gap-4 p-5 bg-gray-50 rounded-[1.5rem] cursor-pointer hover:bg-primary hover:text-white transition-all group"
                      >
-                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-white group-hover:border-white/20 shadow-sm bg-white text-gray-400">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 border-white group-hover:border-white/20 shadow-sm bg-white text-gray-400">
                           {driver.profilePic === "/default-avatar.png" ? (
                             <HiOutlineUser className="text-2xl" />
                           ) : (

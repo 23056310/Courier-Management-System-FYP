@@ -21,16 +21,17 @@ const Login = () => {
 
     try {
       const user = await login({ email, password });
-      toast.success("Login successful!");
+      toast.success("Login successful! Redirecting in 5 seconds...");
       
-      // Redirect based on role
-      if (user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (user.role === "driver") {
-        navigate("/driver/dashboard");
-      } else {
-        navigate("/customer/dashboard");
-      }
+      setTimeout(() => {
+        if (user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (user.role === "driver") {
+          navigate("/driver/dashboard");
+        } else {
+          navigate("/customer/dashboard");
+        }
+      }, 5000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed. Please try again.");
     } finally {
