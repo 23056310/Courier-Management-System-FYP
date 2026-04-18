@@ -9,22 +9,24 @@ export default function Topbar() {
 
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
-      {/* Spacer for alignment since search is removed */}
-      <div className="hidden md:block" />
-
-      <div className="flex items-center gap-2 md:hidden">
-         <Link to="/" className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-            <span className="font-bold italic">C</span>
-         </Link>
+      {/* Left side actions */}
+      <div className="flex items-center gap-3">
+        {/* Mobile Logo */}
+        <div className="md:hidden block">
+           <Link to="/" className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+              <span className="font-bold italic">C</span>
+           </Link>
+        </div>
+        {/* Home Navigation */}
+        <Link to="/" className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/5 transition-all outline-none">
+          <HiOutlineHome className="text-2xl" />
+        </Link>
       </div>
 
       {/* User Info + Notifications */}
       {user && (
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-4">
-            <Link to="/" className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-              <HiOutlineHome className="text-2xl" />
-            </Link>
             <div className="relative">
               <NotificationBadge />
             </div>

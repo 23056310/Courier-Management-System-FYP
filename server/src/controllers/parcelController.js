@@ -146,6 +146,52 @@ export const getMyParcels = async (req, res) => {
   }
 };
 
+// @desc    Customer updates their own parcel
+// @route   PUT /api/parcels/customer/:id
+// @access  Customer
+export const customerUpdateParcel = async (req, res) => {
+  try {
+    const parcel = await Parcel.findOne({ _id: req.params.id, customer: req.user._id });
+    if (!parcel) {
+      return res.status(404).json({ success: false, message: 'Parcel not found or unauthorized' });
+    }
+    if (parcel.status !== 'Pending') {
+      return res.status(400).json({ success: false, message: 'Only Pending parcels can be updated. Please contact support.' });
+    }
+    
+    // Safety: Ensure status and trackingNumber are not overridden by req.body
+    delete req.body.status;
+    delete req.body.trackingNumber;
+    delete req.body.customer;
+
+    Object.assign(parcel, req.body);
+    await parcel.save(); // triggers validation hooks
+    
+    res.status(200).json({ success: true, data: parcel });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Customer deletes their own parcel
+// @route   DELETE /api/parcels/customer/:id
+// @access  Customer
+export const customerDeleteParcel = async (req, res) => {
+  try {
+    const parcel = await Parcel.findOne({ _id: req.params.id, customer: req.user._id });
+    if (!parcel) {
+      return res.status(404).json({ success: false, message: 'Parcel not found or unauthorized' });
+    }
+    if (parcel.status !== 'Pending') {
+      return res.status(400).json({ success: false, message: 'Only Pending parcels can be deleted. Please contact support.' });
+    }
+    await parcel.deleteOne();
+    res.status(200).json({ success: true, message: 'Parcel request cancelled successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ─────────────────────────────────────────────
 // PUBLIC TRACKING
 // ─────────────────────────────────────────────

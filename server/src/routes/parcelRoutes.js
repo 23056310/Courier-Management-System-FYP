@@ -9,6 +9,8 @@ import {
   assignDriver,
   customerCreateParcel,
   getMyParcels,
+  customerUpdateParcel,
+  customerDeleteParcel,
   trackParcel,
   getDriverParcels,
   updateParcelStatus
@@ -26,6 +28,8 @@ router.use(protect);
 // ── CUSTOMER ────────────────────────────────────
 router.post('/customer/create', authorizeRoles('customer'), customerCreateParcel);
 router.get('/customer/my-parcels', authorizeRoles('customer'), getMyParcels);
+router.put('/customer/:id', authorizeRoles('customer'), customerUpdateParcel);
+router.delete('/customer/:id', authorizeRoles('customer'), customerDeleteParcel);
 
 // ── DRIVER ──────────────────────────────────────
 router.get('/driver/assigned', authorizeRoles('driver'), getDriverParcels);

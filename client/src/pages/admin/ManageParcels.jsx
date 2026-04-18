@@ -13,11 +13,11 @@ import {
   HiOutlineX,
   HiOutlineCheckCircle,
   HiOutlineIdentification,
-  HiOutlineMail
+  HiOutlineMail,
+  HiOutlineEye
 } from "react-icons/hi";
 import { 
   getAllParcels, 
-  createParcel, 
   updateParcel, 
   deleteParcel, 
   assignDriver 
@@ -33,21 +33,10 @@ const ManageParcels = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  // Selection for Assign Modal
+  // Selection for Assign Modal & View Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [selectedParcel, setSelectedParcel] = useState(null);
-
-  // Selection for Create/Edit Modal
-  const [showFormModal, setShowFormModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    sender: { name: "", email: "", phone: "", address: "" },
-    recipient: { name: "", email: "", phone: "", address: "" },
-    parcelDetails: { weight: 1, dimensions: "", type: "Other", description: "" },
-    cost: 50,
-    deliveryMethod: "Standard",
-    status: "Pending"
-  });
 
   useEffect(() => {
     fetchData();
@@ -86,6 +75,11 @@ const ManageParcels = () => {
     setShowAssignModal(true);
   };
 
+  const handleOpenView = (parcel) => {
+    setSelectedParcel(parcel);
+    setShowViewModal(true);
+  };
+
   const handleAssignDriver = async (driverId) => {
     try {
       await assignDriver(selectedParcel._id, driverId);
@@ -94,50 +88,6 @@ const ManageParcels = () => {
       fetchData(); // Refresh list
     } catch (error) {
       toast.error("Assignment failed");
-    }
-  };
-
-  const handleOpenCreate = () => {
-    setIsEditing(false);
-    setFormData({
-      sender: { name: "", email: "", phone: "", address: "" },
-      recipient: { name: "", email: "", phone: "", address: "" },
-      parcelDetails: { weight: 1, dimensions: "", type: "Other", description: "" },
-      cost: 50,
-      deliveryMethod: "Standard",
-      status: "Pending"
-    });
-    setShowFormModal(true);
-  };
-
-  const handleOpenEdit = (parcel) => {
-    setIsEditing(true);
-    setSelectedParcel(parcel);
-    setFormData({
-      sender: parcel.sender,
-      recipient: parcel.recipient,
-      parcelDetails: parcel.parcelDetails,
-      cost: parcel.cost,
-      deliveryMethod: parcel.deliveryMethod,
-      status: parcel.status
-    });
-    setShowFormModal(true);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (isEditing) {
-        await updateParcel(selectedParcel._id, formData);
-        toast.success("Parcel updated");
-      } else {
-        await createParcel(formData);
-        toast.success("New parcel created");
-      }
-      setShowFormModal(false);
-      fetchData();
-    } catch (error) {
-      toast.error("Process failed. Please check inputs.");
     }
   };
 
@@ -208,12 +158,6 @@ const ManageParcels = () => {
                 className="flex items-center gap-2 px-6 py-4 bg-white border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-gray-700 hover:bg-gray-50 transition-all text-[10px] shadow-sm whitespace-nowrap"
                >
                  Export CSV
-               </button>
-               <button 
-                onClick={handleOpenCreate}
-                className="flex items-center gap-2 px-6 py-4 bg-gray-900 border border-gray-100 rounded-2xl font-black uppercase tracking-widest text-white hover:bg-primary transition-all text-[10px] shadow-xl whitespace-nowrap"
-               >
-                 <HiOutlinePlus className="text-base" /> New Shipment
                </button>
             </div>
           </div>
@@ -315,10 +259,11 @@ const ManageParcels = () => {
                                </>
                              )}
                              <button 
-                              onClick={() => handleOpenEdit(parcel)}
-                              className="p-2.5 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm cursor-pointer"
+                              onClick={() => handleOpenView(parcel)}
+                              className="p-2.5 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm"
+                              title="View Details"
                              >
-                               <HiOutlinePencilAlt className="text-lg pointer-events-none" />
+                               <HiOutlineEye className="text-lg" />
                              </button>
                              <button 
                               onClick={() => handleDelete(parcel._id)}
@@ -338,6 +283,67 @@ const ManageParcels = () => {
 
           {/* MODALS */}
           
+          {/* VIEW PARCEL MODAL */}
+          {showViewModal && selectedParcel && (
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-md">
+              <div className="bg-white rounded-[3rem] w-full max-w-3xl p-10 shadow-2xl relative animate-in zoom-in duration-300">
+                <button 
+                  onClick={() => setShowViewModal(false)} 
+                  className="absolute top-8 right-8 p-3 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all z-20"
+                >
+                  <HiOutlineX className="text-2xl" />
+                </button>
+
+                <div className="mb-8">
+                   <h2 className="text-3xl font-black italic tracking-tighter uppercase text-gray-900 mb-1">
+                     Parcel Details
+                   </h2>
+                   <p className="text-gray-500 font-medium text-sm">Tracking No: <span className="text-primary font-bold">#{selectedParcel.trackingNumber}</span></p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Sender Info */}
+                  <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block ml-1"><span className="text-primary mr-2">●</span>Origin / Sender</p>
+                    <p className="font-bold text-gray-900 text-sm">{selectedParcel.sender?.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{selectedParcel.sender?.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">{selectedParcel.sender?.phone}</p>
+                    <p className="text-[10px] text-gray-400 font-bold tracking-widest mt-3 uppercase">{selectedParcel.sender?.address}</p>
+                  </div>
+
+                  {/* Recipient Info */}
+                  <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block ml-1"><span className="text-orange-500 mr-2">●</span>Destination / Recipient</p>
+                    <p className="font-bold text-gray-900 text-sm">{selectedParcel.recipient?.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{selectedParcel.recipient?.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">{selectedParcel.recipient?.phone}</p>
+                    <p className="text-[10px] text-gray-400 font-bold tracking-widest mt-3 uppercase">{selectedParcel.recipient?.address}</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div>
+                    <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Type</span>
+                    <span className="font-bold text-gray-900 text-sm">{selectedParcel.parcelDetails?.type}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Weight</span>
+                    <span className="font-bold text-gray-900 text-sm">{selectedParcel.parcelDetails?.weight} kg</span>
+                  </div>
+                  <div>
+                    <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Status</span>
+                    <StatusBadge status={selectedParcel.status} />
+                  </div>
+                  <div>
+                    <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Driver</span>
+                    <span className="font-bold text-gray-900 text-sm">{selectedParcel.assignedDriver?.name || "Unassigned"}</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          )}
+
           {/* ASSIGN DRIVER MODAL */}
           {showAssignModal && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm">
@@ -373,122 +379,11 @@ const ManageParcels = () => {
               </div>
             </div>
           )}
-
-          {/* CREATE / EDIT SHIPMENT MODAL */}
-          {showFormModal && (
-            <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/80 backdrop-blur-md">
-              <div className="bg-white rounded-[3rem] w-full max-w-4xl p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 animate-in zoom-in duration-300 overflow-y-auto max-h-[90vh] custom-scrollbar">
-                
-                <button 
-                  onClick={() => setShowFormModal(false)} 
-                  className="absolute top-8 right-8 p-4 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 transition-all z-20"
-                >
-                  <HiOutlineX className="text-2xl" />
-                </button>
-
-                <div className="mb-12">
-                   <h2 className="text-4xl font-black italic tracking-tighter uppercase text-gray-900 mb-2">
-                     {isEditing ? "Update Shipment" : "Prepare New Dispatch"}
-                   </h2>
-                   <p className="text-gray-500 font-medium">Coordinate the full lifecycle of this active courier parcel.</p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-12">
-                   
-                   {/* SENDER INFO */}
-                   <div className="space-y-6">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 italic flex items-center gap-2">
-                        <span className="w-8 h-px bg-primary/20" /> Origin Details
-                      </p>
-                      <FormInput label="Sender Full Name" value={formData.sender.name} onChange={(val) => setFormData({...formData, sender: {...formData.sender, name: val}})} icon={<HiOutlineUser />} />
-                      <FormInput label="Sender Email" type="email" value={formData.sender.email} onChange={(val) => setFormData({...formData, sender: {...formData.sender, email: val}})} icon={<HiOutlineMail />} />
-                      <FormInput label="Sender Contact Phone" value={formData.sender.phone} onChange={(val) => setFormData({...formData, sender: {...formData.sender, phone: val}})} icon={<HiOutlineTag />} />
-                      <FormInput label="Pickup Address" value={formData.sender.address} onChange={(val) => setFormData({...formData, sender: {...formData.sender, address: val}})} icon={<HiOutlineTag />} />
-                   </div>
-
-                   {/* RECIPIENT INFO */}
-                   <div className="space-y-6">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500 mb-2 italic flex items-center gap-2">
-                        <span className="w-8 h-px bg-orange-500/20" /> Destination Target
-                      </p>
-                      <FormInput label="Recipient Full Name" value={formData.recipient.name} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, name: val}})} icon={<HiOutlineUser />} />
-                      <FormInput label="Recipient Email" type="email" value={formData.recipient.email} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, email: val}})} icon={<HiOutlineMail />} />
-                      <FormInput label="Recipient Contact Phone" value={formData.recipient.phone} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, phone: val}})} icon={<HiOutlineTag />} />
-                      <FormInput label="Delivery Address" value={formData.recipient.address} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, address: val}})} icon={<HiOutlineTag />} />
-                   </div>
-
-                   {/* PARCEL DETAILS */}
-                   <div className="md:col-span-2 grid md:grid-cols-4 gap-8 p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100">
-                      <div className="relative">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Weight (kg)</label>
-                        <input 
-                          type="number" 
-                          value={formData.parcelDetails.weight}
-                          onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, weight: e.target.value}})}
-                          className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
-                        />
-                      </div>
-                      <div className="relative">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Dimensions</label>
-                        <input 
-                          type="text" 
-                          placeholder="20x20x10"
-                          value={formData.parcelDetails.dimensions}
-                          onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, dimensions: e.target.value}})}
-                          className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
-                        />
-                      </div>
-                      <div className="relative">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Type</label>
-                        <select 
-                          value={formData.parcelDetails.type}
-                          onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, type: e.target.value}})}
-                          className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm appearance-none"
-                        >
-                          {['Document', 'Electronics', 'Clothing', 'Fragile', 'Other'].map(t => <option key={t} value={t}>{t}</option>)}
-                        </select>
-                      </div>
-                   </div>
-
-                   <div className="md:col-span-2 pt-4">
-                      <button 
-                        type="submit"
-                        className="w-full py-6 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-[2rem] hover:bg-primary transition-all shadow-2xl flex items-center justify-center gap-4 text-lg active:scale-95 translate-y-0 group hover:-translate-y-1"
-                      >
-                         {isEditing ? <HiOutlineCheckCircle className="text-2xl" /> : <HiOutlineTruck className="text-2xl" />}
-                         {isEditing ? "Finalize Update" : "Authorize Dispatch"}
-                      </button>
-                   </div>
-                </form>
-
-              </div>
-            </div>
-          )}
-
         </main>
       </div>
     </div>
   );
 };
-
-const FormInput = ({ label, value, onChange, icon, type = "text" }) => (
-  <div className="relative group">
-    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1 transition-colors group-focus-within:text-primary">{label}</label>
-    <div className="relative">
-      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg">
-        {icon}
-      </div>
-      <input 
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full pl-14 pr-6 py-4.5 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-gray-900 text-sm placeholder:text-gray-300"
-        required
-      />
-    </div>
-  </div>
-);
-
 const StatusBadge = ({ status }) => {
   const styles = {
     'Delivered': 'bg-green-50 text-green-600 border-green-100',

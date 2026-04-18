@@ -42,6 +42,16 @@ export const getMyParcels = async () => {
   return response.data;
 };
 
+export const customerUpdateParcel = async (id, parcelData) => {
+  const response = await api.put(`/parcels/customer/${id}`, parcelData);
+  return response.data;
+};
+
+export const customerDeleteParcel = async (id) => {
+  const response = await api.delete(`/parcels/customer/${id}`);
+  return response.data;
+};
+
 // ── PUBLIC TRACKING ───────────────────────────────
 export const trackParcelByNumber = async (trackingNumber) => {
   const response = await api.get(`/parcels/track/${trackingNumber}`);

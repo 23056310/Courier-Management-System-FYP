@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
   HiOutlineSearch, HiOutlineFilter, HiOutlineDownload,
-  HiOutlineCube, HiOutlineRefresh, HiOutlinePlus
+  HiOutlineCube, HiOutlineRefresh, HiOutlinePlus,
+  HiOutlinePencilAlt, HiOutlineTrash, HiOutlineX, 
+  HiOutlineUser, HiOutlineTag, HiOutlineMail, HiOutlineCheckCircle
 } from "react-icons/hi";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
-import { getMyParcels } from "../../services/parcelService";
+import { getMyParcels, customerUpdateParcel, customerDeleteParcel } from "../../services/parcelService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -14,6 +16,15 @@ const ParcelHistory = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedParcel, setSelectedParcel] = useState(null);
+  const [formData, setFormData] = useState({
+    sender: { name: "", email: "", phone: "", address: "" },
+    recipient: { name: "", email: "", phone: "", address: "" },
+    parcelDetails: { weight: 1, dimensions: "", type: "Other", description: "" }
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,6 +62,40 @@ const ParcelHistory = () => {
     a.href = url;
     a.download = 'my_parcel_history.csv';
     a.click();
+  };
+
+  const handleOpenEdit = (parcel) => {
+    setSelectedParcel(parcel);
+    setFormData({
+      sender: parcel.sender,
+      recipient: parcel.recipient,
+      parcelDetails: parcel.parcelDetails
+    });
+    setShowFormModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to cancel this parcel request?")) {
+      try {
+        await customerDeleteParcel(id);
+        toast.success("Parcel request cancelled");
+        fetchParcels();
+      } catch {
+        toast.error("Failed to cancel parcel");
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await customerUpdateParcel(selectedParcel._id, formData);
+      toast.success("Parcel details updated");
+      setShowFormModal(false);
+      fetchParcels();
+    } catch {
+      toast.error("Update failed. Make sure parcel is Pending.");
+    }
   };
 
   return (
@@ -171,12 +216,32 @@ const ParcelHistory = () => {
                           <span className="block text-xs font-medium text-gray-400">{new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                         </td>
                         <td className="px-8 py-6 text-right">
-                          <button
-                            onClick={() => navigate(`/customer/track-parcel?id=${parcel.trackingNumber}`)}
-                            className="px-4 py-2 bg-primary/5 text-primary text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all"
-                          >
-                            Track
-                          </button>
+                          <div className="flex justify-end items-center gap-2">
+                            {parcel.status === "Pending" && (
+                              <>
+                                <button
+                                  onClick={() => handleOpenEdit(parcel)}
+                                  className="p-2 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm"
+                                  title="Edit Parcel"
+                                >
+                                  <HiOutlinePencilAlt className="text-sm" />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(parcel._id)}
+                                  className="p-2 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl border border-gray-100 transition-all shadow-sm"
+                                  title="Delete Parcel"
+                                >
+                                  <HiOutlineTrash className="text-sm" />
+                                </button>
+                              </>
+                            )}
+                            <button
+                              onClick={() => navigate(`/customer/track-parcel?id=${parcel.trackingNumber}`)}
+                              className="px-4 py-2 bg-primary/5 text-primary text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all ml-2"
+                            >
+                              Track
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -192,6 +257,96 @@ const ParcelHistory = () => {
           </div>
         </main>
       </div>
+
+      {showFormModal && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/80 backdrop-blur-md">
+          <div className="bg-white rounded-[3rem] w-full max-w-4xl p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 animate-in zoom-in duration-300 overflow-y-auto max-h-[90vh] custom-scrollbar">
+            
+            <button 
+              onClick={() => setShowFormModal(false)} 
+              className="absolute top-8 right-8 p-4 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 transition-all z-20"
+            >
+              <HiOutlineX className="text-2xl" />
+            </button>
+
+            <div className="mb-12">
+               <h2 className="text-4xl font-black italic tracking-tighter uppercase text-gray-900 mb-2">
+                 Update Shipment
+               </h2>
+               <p className="text-gray-500 font-medium">Modify your pending parcel details before dispatch.</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-12">
+               {/* SENDER INFO */}
+               <div className="space-y-6">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 italic flex items-center gap-2">
+                    <span className="w-8 h-px bg-primary/20" /> Origin Details
+                  </p>
+                  <FormInput label="Sender Full Name" value={formData.sender.name} onChange={(val) => setFormData({...formData, sender: {...formData.sender, name: val}})} icon={<HiOutlineUser />} />
+                  <FormInput label="Sender Email" type="email" value={formData.sender.email} onChange={(val) => setFormData({...formData, sender: {...formData.sender, email: val}})} icon={<HiOutlineMail />} />
+                  <FormInput label="Sender Contact Phone" value={formData.sender.phone} onChange={(val) => setFormData({...formData, sender: {...formData.sender, phone: val}})} icon={<HiOutlineTag />} />
+                  <FormInput label="Pickup Address" value={formData.sender.address} onChange={(val) => setFormData({...formData, sender: {...formData.sender, address: val}})} icon={<HiOutlineTag />} />
+               </div>
+
+               {/* RECIPIENT INFO */}
+               <div className="space-y-6">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500 mb-2 italic flex items-center gap-2">
+                    <span className="w-8 h-px bg-orange-500/20" /> Destination Target
+                  </p>
+                  <FormInput label="Recipient Full Name" value={formData.recipient.name} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, name: val}})} icon={<HiOutlineUser />} />
+                  <FormInput label="Recipient Email" type="email" value={formData.recipient.email} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, email: val}})} icon={<HiOutlineMail />} />
+                  <FormInput label="Recipient Contact Phone" value={formData.recipient.phone} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, phone: val}})} icon={<HiOutlineTag />} />
+                  <FormInput label="Delivery Address" value={formData.recipient.address} onChange={(val) => setFormData({...formData, recipient: {...formData.recipient, address: val}})} icon={<HiOutlineTag />} />
+               </div>
+
+               {/* PARCEL DETAILS */}
+               <div className="md:col-span-2 grid md:grid-cols-3 gap-8 p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100">
+                  <div className="relative">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Weight (kg)</label>
+                    <input 
+                      type="number" 
+                      value={formData.parcelDetails.weight}
+                      onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, weight: e.target.value}})}
+                      className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Dimensions</label>
+                    <input 
+                      type="text" 
+                      placeholder="20x20x10"
+                      value={formData.parcelDetails.dimensions}
+                      onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, dimensions: e.target.value}})}
+                      className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Type</label>
+                    <select 
+                      value={formData.parcelDetails.type}
+                      onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, type: e.target.value}})}
+                      className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm appearance-none"
+                    >
+                      {['Document', 'Electronics', 'Clothing', 'Fragile', 'Other'].map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
+               </div>
+
+               <div className="md:col-span-2 pt-4">
+                  <button 
+                    type="submit"
+                    className="w-full py-6 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-[2rem] hover:bg-primary transition-all shadow-2xl flex items-center justify-center gap-4 text-lg active:scale-95 translate-y-0 group hover:-translate-y-1"
+                  >
+                     <HiOutlineCheckCircle className="text-2xl" />
+                     Finalize Update
+                  </button>
+               </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
@@ -213,5 +368,23 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
+
+const FormInput = ({ label, value, onChange, icon, type = "text" }) => (
+  <div className="relative group">
+    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1 transition-colors group-focus-within:text-primary">{label}</label>
+    <div className="relative">
+      <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors text-lg">
+        {icon}
+      </div>
+      <input 
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full pl-14 pr-6 py-4.5 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-gray-900 text-sm placeholder:text-gray-300"
+        required
+      />
+    </div>
+  </div>
+);
 
 export default ParcelHistory;

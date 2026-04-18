@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   HiOutlineFilter, HiOutlineDownload, HiOutlineMap,
   HiOutlineDotsVertical, HiOutlineRefresh, HiOutlineCheck,
-  HiOutlineTruck, HiOutlineX
+  HiOutlineTruck, HiOutlineX, HiOutlineEye
 } from "react-icons/hi";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
@@ -22,6 +22,8 @@ const MyParcels = () => {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null); // { parcelId, nextStatus, label }
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedParcel, setSelectedParcel] = useState(null);
 
   useEffect(() => {
     fetchParcels();
@@ -37,6 +39,11 @@ const MyParcels = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpenView = (parcel) => {
+    setSelectedParcel(parcel);
+    setShowViewModal(true);
   };
 
   const handleStatusUpdate = async () => {
@@ -164,6 +171,12 @@ const MyParcels = () => {
                               </td>
                               <td className="px-8 py-6 text-right">
                                 <div className="flex justify-end items-center gap-2">
+                                  <button
+                                    onClick={() => handleOpenView(parcel)}
+                                    className="px-4 py-2 bg-gray-50 text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm"
+                                  >
+                                    <HiOutlineEye className="text-lg" />
+                                  </button>
                                   {next && (
                                     <button
                                       disabled={updatingId === parcel._id}
@@ -200,6 +213,7 @@ const MyParcels = () => {
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Receiver</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
                           <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Date Delivered</th>
+                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -222,6 +236,14 @@ const MyParcels = () => {
                                <span className="text-xs">{new Date(parcel.updatedAt).toLocaleDateString()}</span>
                                <span className="block text-[10px] font-medium text-gray-400 mt-0.5">{new Date(parcel.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                             </td>
+                            <td className="px-8 py-5 text-right">
+                                <button
+                                  onClick={() => handleOpenView(parcel)}
+                                  className="px-4 py-2 bg-white text-gray-400 hover:text-primary hover:bg-primary/5 rounded-xl border border-gray-100 transition-all shadow-sm"
+                                >
+                                  <HiOutlineEye className="text-lg" />
+                                </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -233,6 +255,65 @@ const MyParcels = () => {
           )}
         </main>
       </div>
+
+      {/* VIEW PARCEL MODAL */}
+      {showViewModal && selectedParcel && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-md">
+          <div className="bg-white rounded-[3rem] w-full max-w-3xl p-10 shadow-2xl relative animate-in zoom-in duration-300">
+            <button 
+              onClick={() => setShowViewModal(false)} 
+              className="absolute top-8 right-8 p-3 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all z-20"
+            >
+              <HiOutlineX className="text-2xl" />
+            </button>
+
+            <div className="mb-8">
+               <h2 className="text-3xl font-black italic tracking-tighter uppercase text-gray-900 mb-1">
+                 Parcel Details
+               </h2>
+               <p className="text-gray-500 font-medium text-sm">Tracking No: <span className="text-primary font-bold">#{selectedParcel.trackingNumber}</span></p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Sender Info */}
+              <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block ml-1"><span className="text-primary mr-2">●</span>Origin / Sender</p>
+                <p className="font-bold text-gray-900 text-sm">{selectedParcel.sender?.name}</p>
+                <p className="text-xs text-gray-500 mt-1">{selectedParcel.sender?.phone}</p>
+                <p className="text-[10px] text-gray-400 font-bold tracking-widest mt-3 uppercase">{selectedParcel.sender?.address}</p>
+              </div>
+
+              {/* Recipient Info */}
+              <div className="p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block ml-1"><span className="text-orange-500 mr-2">●</span>Destination / Recipient</p>
+                <p className="font-bold text-gray-900 text-sm">{selectedParcel.recipient?.name}</p>
+                <p className="text-xs text-gray-500 mt-1">{selectedParcel.recipient?.phone}</p>
+                <p className="text-[10px] text-gray-400 font-bold tracking-widest mt-3 uppercase">{selectedParcel.recipient?.address}</p>
+              </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div>
+                <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Type</span>
+                <span className="font-bold text-gray-900 text-sm">{selectedParcel.parcelDetails?.type}</span>
+              </div>
+              <div>
+                <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Weight</span>
+                <span className="font-bold text-gray-900 text-sm">{selectedParcel.parcelDetails?.weight} kg</span>
+              </div>
+              <div>
+                <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Status</span>
+                <div className="mt-1"><StatusBadge status={selectedParcel.status} /></div>
+              </div>
+              <div>
+                <span className="block text-[9px] font-black tracking-widest uppercase text-gray-400 mb-1">Delivery</span>
+                <span className="font-bold text-gray-900 text-sm capitalize">{selectedParcel.deliveryMethod}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* CONFIRM MODAL */}
       {confirmModal && (
