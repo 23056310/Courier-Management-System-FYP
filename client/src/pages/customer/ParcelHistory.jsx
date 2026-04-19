@@ -22,7 +22,7 @@ const ParcelHistory = () => {
   const [formData, setFormData] = useState({
     sender: { name: "", email: "", phone: "", address: "" },
     recipient: { name: "", email: "", phone: "", address: "" },
-    parcelDetails: { weight: 1, dimensions: "", type: "Other", description: "" }
+    parcelDetails: { weight: 1, dimensions: "", type: "Other", otherType: "", description: "" }
   });
 
   const navigate = useNavigate();
@@ -69,7 +69,15 @@ const ParcelHistory = () => {
     setFormData({
       sender: parcel.sender,
       recipient: parcel.recipient,
-      parcelDetails: parcel.parcelDetails
+      parcelDetails: {
+        ...parcel.parcelDetails,
+        otherType: ["Document", "Electronics", "Clothing", "Fragile"].includes(parcel.parcelDetails.type) 
+          ? "" 
+          : parcel.parcelDetails.type,
+        type: ["Document", "Electronics", "Clothing", "Fragile"].includes(parcel.parcelDetails.type)
+          ? parcel.parcelDetails.type
+          : "Other"
+      }
     });
     setShowFormModal(true);
   };
@@ -89,7 +97,14 @@ const ParcelHistory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await customerUpdateParcel(selectedParcel._id, formData);
+      const payload = {
+        ...formData,
+        parcelDetails: {
+          ...formData.parcelDetails,
+          type: formData.parcelDetails.type === "Other" ? formData.parcelDetails.otherType : formData.parcelDetails.type
+        }
+      };
+      await customerUpdateParcel(selectedParcel._id, payload);
       toast.success("Parcel details updated");
       setShowFormModal(false);
       fetchParcels();
@@ -330,6 +345,18 @@ const ParcelHistory = () => {
                       {['Document', 'Electronics', 'Clothing', 'Fragile', 'Other'].map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
+                  {formData.parcelDetails.type === "Other" && (
+                    <div className="relative">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Specify Type</label>
+                      <input 
+                        type="text" 
+                        value={formData.parcelDetails.otherType}
+                        onChange={(e) => setFormData({...formData, parcelDetails: {...formData.parcelDetails, otherType: e.target.value}})}
+                        className="w-full px-6 py-4 bg-white border border-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 font-bold transition-all text-sm shadow-sm"
+                        required
+                      />
+                    </div>
+                  )}
                </div>
 
                <div className="md:col-span-2 pt-4">

@@ -23,7 +23,6 @@ const parcelSchema = new mongoose.Schema({
     dimensions: { type: String }, // e.g., 20x20x20
     type: { 
       type: String, 
-      enum: ['Document', 'Electronics', 'Clothing', 'Fragile', 'Other'],
       default: 'Other'
     },
     description: { type: String }

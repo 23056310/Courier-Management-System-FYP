@@ -15,6 +15,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 
 /* PROFILE */
 import Profile from "./pages/public/Profile";
+import Notifications from "./pages/public/Notifications";
 
 /* ADMIN PAGES */
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -67,6 +68,14 @@ function App() {
         element={
           <ProtectedRoute roles={["customer", "admin", "driver"]}>
             <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute roles={["customer", "admin", "driver"]}>
+            <Notifications />
           </ProtectedRoute>
         }
       />

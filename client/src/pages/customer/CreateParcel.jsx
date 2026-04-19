@@ -28,6 +28,7 @@ const CreateParcel = () => {
     recipientAddress: "",
     weight: "",
     parcelType: "Document",
+    otherType: "",
     description: "",
     deliveryMethod: "Standard",
   });
@@ -55,7 +56,7 @@ const CreateParcel = () => {
         },
         parcelDetails: {
           weight: parseFloat(formData.weight),
-          type: formData.parcelType,
+          type: formData.parcelType === "Other" ? formData.otherType : formData.parcelType,
           description: formData.description,
         },
         deliveryMethod: formData.deliveryMethod,
@@ -95,7 +96,7 @@ const CreateParcel = () => {
                 </div>
                 <div className="flex gap-4">
                   <button
-                    onClick={() => navigate("/customer/track-parcel")}
+                    onClick={() => navigate(`/customer/track-parcel?id=${trackingResult}`)}
                     className="flex-1 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-900 transition-all"
                   >
                     Track Now
@@ -174,6 +175,17 @@ const CreateParcel = () => {
                       ))}
                     </select>
                   </div>
+                  {formData.parcelType === "Other" && (
+                    <FormField 
+                      label="Specify Parcel Type" 
+                      name="otherType" 
+                      value={formData.otherType} 
+                      onChange={handleChange} 
+                      placeholder="e.g. Furniture, Perishables..." 
+                      required 
+                      accentColor="purple" 
+                    />
+                  )}
                   <FormField label="Estimated Weight (kg)" name="weight" type="number" value={formData.weight} onChange={handleChange} placeholder="0.5" required accentColor="purple" />
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Delivery Method</label>

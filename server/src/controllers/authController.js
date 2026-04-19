@@ -4,6 +4,9 @@ import User from "../models/User.js";
 import Parcel from "../models/Parcel.js";
 import Inquiry from "../models/Inquiry.js";
 import { generateToken } from "../utils/generateToken.js";
+import { createNotification } from "./notificationController.js";
+import { sendSocketNotification } from "../config/socket.js";
+
 
 /* ===============================
    REGISTER USER
@@ -47,6 +50,16 @@ export const registerUser = async (req, res) => {
     const token = generateToken(user._id);
     console.log("Token generated.");
 
+    // Notify Admin if it's a driver
+    if (user.role === 'driver') {
+      const admins = await User.find({ role: 'admin' });
+      const msg = `New driver ${user.name} registered and is pending verification.`;
+      for (const admin of admins) {
+        const notif = await createNotification(admin._id, 'DriverRegistered', msg);
+        sendSocketNotification(admin._id.toString(), notif);
+      }
+    }
+
     res.status(201).json({
       message: "User registered successfully",
       token,
@@ -56,11 +69,13 @@ export const registerUser = async (req, res) => {
         email: user.email,
         role: user.role,
         profilePic: user.profilePic,
+        driverStatus: user.driverStatus,
+        isVerified: user.isVerified,
       },
     });
   } catch (error) {
     console.error("DEBUG: Registration error detail:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Internal Server Error during registration",
       error: error.message,
       stack: error.stack,
@@ -96,6 +111,8 @@ export const loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         profilePic: user.profilePic,
+        driverStatus: user.driverStatus,
+        isVerified: user.isVerified,
       },
     });
   } catch (error) {
@@ -190,6 +207,8 @@ export const getProfile = async (req, res) => {
     email: req.user.email,
     role: req.user.role,
     profilePic: req.user.profilePic,
+    driverStatus: req.user.driverStatus,
+    isVerified: req.user.isVerified,
   });
 };
 /* ===============================
@@ -227,6 +246,8 @@ export const updateProfile = async (req, res) => {
         email: req.user.email,
         role: req.user.role,
         profilePic: req.user.profilePic,
+        driverStatus: req.user.driverStatus,
+        isVerified: req.user.isVerified,
       },
     });
   } catch (error) {
@@ -254,9 +275,18 @@ export const updateUserRole = async (req, res) => {
 
   if (role) user.role = role;
   if (isVerified !== undefined) user.isVerified = isVerified;
+
+  const oldStatus = user.driverStatus;
   if (driverStatus) user.driverStatus = driverStatus;
-  
+
   await user.save();
+
+  // Notify driver about status change
+  if (driverStatus && driverStatus !== oldStatus) {
+    const msg = `Your driver account status has been updated to ${driverStatus}.`;
+    const notif = await createNotification(user._id, 'DriverStatusUpdate', msg);
+    sendSocketNotification(user._id.toString(), notif);
+  }
 
   res.json({ message: "User details updated successfully", user });
 };
@@ -289,7 +319,7 @@ export const getAdminDashboardStats = async (req, res) => {
         .populate('assignedDriver', 'name')
         .populate('customer', 'name'),
     ]);
-    
+
     // Calculate performance data (Delivered vs Others)
     const deliveredCount = await Parcel.countDocuments({ status: 'Delivered' });
     const inTransitCount = await Parcel.countDocuments({ status: 'In Transit' });
@@ -305,7 +335,7 @@ export const getAdminDashboardStats = async (req, res) => {
     // Calculate analytics for the last 7 days
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
+
     const dailyStats = await Parcel.aggregate([
       { $match: { createdAt: { $gte: sevenDaysAgo } } },
       {

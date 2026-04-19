@@ -1,5 +1,8 @@
 import Parcel from '../models/Parcel.js';
 import User from '../models/User.js';
+import { createNotification } from './notificationController.js';
+import { sendSocketNotification } from '../config/socket.js';
+
 
 // ─────────────────────────────────────────────
 // ADMIN ROUTES
@@ -55,13 +58,23 @@ export const getParcelById = async (req, res) => {
 // @access  Admin
 export const updateParcel = async (req, res) => {
   try {
+    const oldParcel = await Parcel.findById(req.params.id);
+    if (!oldParcel) {
+      return res.status(404).json({ success: false, message: 'Parcel not found' });
+    }
+
     const parcel = await Parcel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
-    if (!parcel) {
-      return res.status(404).json({ success: false, message: 'Parcel not found' });
+
+    // Notify customer if status changed
+    if (req.body.status && req.body.status !== oldParcel.status) {
+      const msg = `Your parcel ${parcel.trackingNumber} status has been updated to ${req.body.status}.`;
+      const notif = await createNotification(parcel.customer, 'ParcelStatusUpdate', msg, parcel._id);
+      sendSocketNotification(parcel.customer.toString(), notif);
     }
+
     res.status(200).json({ success: true, data: parcel });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -105,6 +118,13 @@ export const assignDriver = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Parcel not found' });
     }
 
+    // Notify Driver
+    if (driverId) {
+      const msg = `You have been assigned to deliver parcel ${parcel.trackingNumber}.`;
+      const notif = await createNotification(driverId, 'DriverAssigned', msg, parcel._id);
+      sendSocketNotification(driverId.toString(), notif);
+    }
+
     res.status(200).json({ success: true, data: parcel });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -126,6 +146,15 @@ export const customerCreateParcel = async (req, res) => {
       status: 'Pending'
     });
     await parcel.save();
+
+    // Notify Admin
+    const admins = await User.find({ role: 'admin' });
+    const msg = `New parcel request ${parcel.trackingNumber} created by ${req.user.name}.`;
+    for (const admin of admins) {
+      const notif = await createNotification(admin._id, 'ParcelCreated', msg, parcel._id);
+      sendSocketNotification(admin._id.toString(), notif);
+    }
+
     res.status(201).json({ success: true, data: parcel, trackingNumber: parcel.trackingNumber });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -240,7 +269,7 @@ export const updateParcelStatus = async (req, res) => {
   try {
     const { status } = req.body;
 
-    const allowedStatuses = ['Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
+    const allowedStatuses = ['Accepted', 'Rejected', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: 'Invalid status transition' });
     }
@@ -257,6 +286,28 @@ export const updateParcelStatus = async (req, res) => {
 
     parcel.status = status;
     await parcel.save();
+
+    // Notify Customer and Admin
+    let msg = `Driver ${req.user.name} updated parcel ${parcel.trackingNumber} status to ${status}.`;
+    
+    if (status === 'Accepted') {
+      msg = `Driver ${req.user.name} has accepted the delivery of parcel ${parcel.trackingNumber}.`;
+    } else if (status === 'Rejected') {
+      msg = `Driver ${req.user.name} has declined the delivery of parcel ${parcel.trackingNumber}.`;
+    } else if (status === 'Picked Up') {
+      msg = `Your parcel ${parcel.trackingNumber} has been picked up by ${req.user.name}.`;
+    }
+
+    // Notify Customer
+    const custNotif = await createNotification(parcel.customer, 'ParcelStatusUpdate', msg, parcel._id);
+    sendSocketNotification(parcel.customer.toString(), custNotif);
+
+    // Notify Admin
+    const admins = await User.find({ role: 'admin' });
+    for (const admin of admins) {
+      const adminNotif = await createNotification(admin._id, 'ParcelStatusUpdate', msg, parcel._id);
+      sendSocketNotification(admin._id.toString(), adminNotif);
+    }
 
     res.status(200).json({ success: true, data: parcel });
   } catch (error) {

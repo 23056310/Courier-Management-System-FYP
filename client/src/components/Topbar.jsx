@@ -46,7 +46,13 @@ export default function Topbar() {
                 alt={user.name || "User"}
                 className="w-11 h-11 rounded-full border-2 border-gray-50 object-cover shadow-sm group-hover:shadow-md transition-shadow"
               />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
+              <div 
+                className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full ${
+                  user.role === 'driver' 
+                    ? (user.driverStatus === 'Active' ? "bg-green-500" : "bg-red-500")
+                    : "bg-green-500"
+                }`} 
+              />
             </div>
           </div>
         </div>

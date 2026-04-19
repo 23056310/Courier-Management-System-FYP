@@ -11,6 +11,8 @@ import path from 'path';
 import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
+import { initSocket } from './config/socket.js';
+
 
 // DB + Routes
 import connectDB from './config/db.js'; 
@@ -18,6 +20,8 @@ import authRoutes from './routes/authRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
 import websiteSettingsRoutes from './routes/websiteSettingsRoutes.js';
 import parcelRoutes from './routes/parcelRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+
 
 
 // Express app + HTTP server
@@ -26,28 +30,8 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 8000;
 
 // ✅ Socket.IO setup
-export const io = new Server(server, {
-  cors: { origin: "*" }
-});
+initSocket(server);
 
-io.on("connection", (socket) => {
-  console.log("🔌 User connected:", socket.id);
-
-  // Join room by userId
-  socket.on("join", (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined their room`);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
-  });
-});
-
-// ✅ Utility to emit notifications
-export const sendSocketNotification = (userId, notification) => {
-  io.to(userId).emit("newNotification", notification);
-};
 
 // Connect MongoDB
 connectDB();
@@ -64,6 +48,8 @@ app.use('/api/auth', authRoutes);
 app.use("/api/inquiries", inquiryRoutes);
 app.use("/api/settings", websiteSettingsRoutes);
 app.use("/api/parcels", parcelRoutes);
+app.use("/api/notifications", notificationRoutes);
+
 
 app.get('/', (req, res) => {
   res.send('🚀 Courier Management System Backend is running!');
