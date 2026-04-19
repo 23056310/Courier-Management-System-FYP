@@ -263,3 +263,125 @@ export const updateParcelStatus = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// @desc    Get dashboard stats for driver
+// @route   GET /api/parcels/driver/dashboard/stats
+// @access  Driver
+export const getDriverDashboardStats = async (req, res) => {
+  try {
+    const driverId = req.user._id;
+
+    const [totalAssigned, completed, inTransit] = await Promise.all([
+      Parcel.countDocuments({ assignedDriver: driverId }),
+      Parcel.countDocuments({ assignedDriver: driverId, status: 'Delivered' }),
+      Parcel.countDocuments({ assignedDriver: driverId, status: 'In Transit' }),
+    ]);
+
+    // Calculate weekly analytics for driver
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const dailyStats = await Parcel.aggregate([
+      { 
+        $match: { 
+          assignedDriver: driverId,
+          status: 'Delivered',
+          updatedAt: { $gte: sevenDaysAgo } 
+        } 
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+
+    const analytics = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const match = dailyStats.find(s => s._id === dateStr);
+      analytics.push({
+        name: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        deliveries: match ? match.count : 0
+      });
+    }
+
+    res.json({
+      success: true,
+      stats: {
+        totalAssigned,
+        completed,
+        inTransit,
+        active: totalAssigned - completed // Total that are not delivered yet
+      },
+      analytics
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get dashboard stats for customer
+// @route   GET /api/parcels/customer/dashboard/stats
+// @access  Customer
+export const getCustomerDashboardStats = async (req, res) => {
+  try {
+    const customerId = req.user._id;
+
+    const [total, delivered, inTransit, pending] = await Promise.all([
+      Parcel.countDocuments({ customer: customerId }),
+      Parcel.countDocuments({ customer: customerId, status: 'Delivered' }),
+      Parcel.countDocuments({ customer: customerId, status: 'In Transit' }),
+      Parcel.countDocuments({ customer: customerId, status: 'Pending' }),
+    ]);
+
+    // Calculate weekly analytics for customer (bookings per day)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const dailyStats = await Parcel.aggregate([
+      { 
+        $match: { 
+          customer: customerId,
+          createdAt: { $gte: sevenDaysAgo } 
+        } 
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+
+    const analytics = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const match = dailyStats.find(s => s._id === dateStr);
+      analytics.push({
+        name: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        bookings: match ? match.count : 0
+      });
+    }
+
+    res.json({
+      success: true,
+      stats: {
+        total,
+        delivered,
+        inTransit,
+        pending
+      },
+      analytics
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

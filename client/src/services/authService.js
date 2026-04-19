@@ -98,8 +98,8 @@ export const getAllUsers = async () => {
 };
 
 
-export const updateUserRole = async (id, role) => {
-  const response = await api.put(`/auth/users/${id}`, { role });
+export const updateUserRole = async (id, data) => {
+  const response = await api.put(`/auth/users/${id}`, data);
   return response.data;
 };
 

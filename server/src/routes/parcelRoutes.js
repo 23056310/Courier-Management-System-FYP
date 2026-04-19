@@ -13,7 +13,9 @@ import {
   customerDeleteParcel,
   trackParcel,
   getDriverParcels,
-  updateParcelStatus
+  updateParcelStatus,
+  getDriverDashboardStats,
+  getCustomerDashboardStats
 } from '../controllers/parcelController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
@@ -28,11 +30,13 @@ router.use(protect);
 // ── CUSTOMER ────────────────────────────────────
 router.post('/customer/create', authorizeRoles('customer'), customerCreateParcel);
 router.get('/customer/my-parcels', authorizeRoles('customer'), getMyParcels);
+router.get('/customer/dashboard/stats', authorizeRoles('customer'), getCustomerDashboardStats);
 router.put('/customer/:id', authorizeRoles('customer'), customerUpdateParcel);
 router.delete('/customer/:id', authorizeRoles('customer'), customerDeleteParcel);
 
 // ── DRIVER ──────────────────────────────────────
 router.get('/driver/assigned', authorizeRoles('driver'), getDriverParcels);
+router.get('/driver/dashboard/stats', authorizeRoles('driver'), getDriverDashboardStats);
 router.patch('/:id/status', authorizeRoles('driver'), updateParcelStatus);
 
 // ── ADMIN ───────────────────────────────────────

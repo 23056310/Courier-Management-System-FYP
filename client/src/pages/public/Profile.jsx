@@ -129,7 +129,7 @@ export default function Profile() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-[2.5rem] p-10 md:p-14 shadow-2xl shadow-gray-200/50 border border-gray-100 h-full">
               {isEditing && (
-                <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                <div>
                   <h3 className="text-2xl font-black text-gray-900 italic uppercase mb-10 flex items-center gap-4">
                     <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white"><HiOutlineUser /></div>
                     Personal Details
@@ -151,7 +151,7 @@ export default function Profile() {
               )}
 
               {isChangingPassword && (
-                <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                <div>
                   <h3 className="text-2xl font-black text-gray-900 italic uppercase mb-10 flex items-center gap-4">
                     <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center text-white"><HiOutlineLockClosed /></div>
                     Change Password

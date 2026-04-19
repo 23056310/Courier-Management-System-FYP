@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
-import { HiOutlineSearch, HiOutlineFilter, HiOutlineDownload, HiOutlineTruck, HiOutlineMail, HiOutlineTrash, HiOutlineUserCircle } from "react-icons/hi";
-import { getAllUsers, deleteUser } from "../../services/authService";
+import { HiOutlineSearch, HiOutlineTruck, HiOutlineMail, HiOutlineTrash, HiOutlineCheck, HiOutlineX } from "react-icons/hi";
+import { getAllUsers, deleteUser, updateUserRole } from "../../services/authService";
 import { toast } from "react-hot-toast";
 
 const ManageDrivers = () => {
@@ -25,14 +25,27 @@ const ManageDrivers = () => {
     }
   };
 
+  const handleVerify = async (id, status) => {
+    try {
+      await updateUserRole(id, { 
+        driverStatus: status, 
+        isVerified: status === "Active" 
+      });
+      toast.success(`Driver ${status === "Active" ? "Approved" : "Rejected"}`);
+      fetchDrivers();
+    } catch (error) {
+      toast.error("Process failed");
+    }
+  };
+
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this driver? All associated delivery logs will remain for record parity.")) {
+    if (window.confirm("Are you sure you want to delete this driver?")) {
       try {
         await deleteUser(id);
         toast.success("Driver deleted successfully");
         setDrivers(drivers.filter(d => d._id !== id));
       } catch (error) {
-        toast.error(error.response?.data?.message || "Failed to delete driver");
+        toast.error("Failed to delete driver");
       }
     }
   };
@@ -87,7 +100,7 @@ const ManageDrivers = () => {
                         <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
                         <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact Details</th>
                         <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Joined Date</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-center">Verification Status</th>
                         <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
                       </tr>
                     </thead>
@@ -117,15 +130,33 @@ const ManageDrivers = () => {
                           <td className="px-8 py-6 text-xs font-bold text-gray-400 uppercase tracking-widest">
                             {new Date(driver.createdAt).toLocaleDateString()}
                           </td>
-                          <td className="px-8 py-6">
-                            <StatusBadge status="Active" />
+                          <td className="px-8 py-6 text-center">
+                            <StatusBadge status={driver.driverStatus || "Pending"} />
                           </td>
                           <td className="px-8 py-6 text-right">
-                             <div className="flex justify-end gap-3">
+                             <div className="flex justify-end gap-3 transition-all">
+                               {driver.driverStatus !== "Active" && (
+                                 <button 
+                                  onClick={() => handleVerify(driver._id, "Active")}
+                                  className="p-2.5 bg-green-50 text-green-600 hover:bg-green-500 hover:text-white rounded-xl border border-green-100 transition-all shadow-sm"
+                                  title="Approve Driver"
+                                 >
+                                   <HiOutlineCheck className="text-lg" />
+                                 </button>
+                               )}
+                               {driver.driverStatus !== "Rejected" && (
+                                 <button 
+                                  onClick={() => handleVerify(driver._id, "Rejected")}
+                                  className="p-2.5 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-xl border border-red-100 transition-all shadow-sm"
+                                  title="Reject Driver"
+                                 >
+                                   <HiOutlineX className="text-lg" />
+                                 </button>
+                               )}
                                <button 
                                 onClick={() => handleDelete(driver._id)}
-                                className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                title="Delete Driver"
+                                className="p-2.5 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl border border-gray-100 transition-all shadow-sm"
+                                title="Delete Permanently"
                                >
                                  <HiOutlineTrash className="text-xl" />
                                </button>
@@ -144,10 +175,18 @@ const ManageDrivers = () => {
   );
 };
 
-const StatusBadge = ({ status }) => (
-  <span className="px-4 py-1.5 rounded-full border bg-green-50 text-green-600 border-green-100 text-[10px] font-black uppercase tracking-widest">
-    {status}
-  </span>
-);
+const StatusBadge = ({ status }) => {
+  const styles = {
+    'Active': 'bg-green-50 text-green-600 border-green-100',
+    'Pending': 'bg-yellow-50 text-yellow-600 border-yellow-100',
+    'Rejected': 'bg-red-50 text-red-600 border-red-100'
+  }[status] || 'bg-gray-50 text-gray-500 border-gray-100';
+
+  return (
+    <span className={`px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest ${styles}`}>
+      {status}
+    </span>
+  );
+};
 
 export default ManageDrivers;

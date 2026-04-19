@@ -180,7 +180,7 @@ const ManageInquiries = () => {
       {/* REPLY MODAL */}
       {replyingTo && (
         <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
-          <div className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in duration-300">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl">
             <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <div>
                 <h3 className="text-xl font-black text-gray-900 italic uppercase">{replyingTo.status === "Pending" ? "Reply to Inquiry" : "Inquiry Details"}</h3>

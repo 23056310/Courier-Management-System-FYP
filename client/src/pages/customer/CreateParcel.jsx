@@ -231,7 +231,6 @@ const SectionCard = ({ color, icon, title, children }) => {
   const c = colorMap[color];
   return (
     <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
-      <div className={`absolute top-0 right-0 w-32 h-32 ${c.bg} opacity-5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-110 transition-transform`} />
       <div className="flex items-center gap-4 mb-8">
         <div className={`w-12 h-12 ${c.bg} rounded-2xl flex items-center justify-center text-white text-xl shadow-lg ${c.shadow}`}>
           {icon}

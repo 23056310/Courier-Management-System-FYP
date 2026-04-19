@@ -143,7 +143,6 @@ const TrackParcel = () => {
 
                 {/* TIMELINE */}
                 <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 md:p-14 shadow-sm relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-gray-50 rounded-bl-full -mr-32 -mt-32 z-0" />
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-16">
                       <h3 className="text-2xl font-black italic text-gray-900 uppercase tracking-tighter">Shipment Journey</h3>
@@ -176,7 +175,7 @@ const TrackParcel = () => {
                                   {step}
                                 </h4>
                                 {active && (
-                                  <span className="inline-block px-3 py-1 bg-green-500 text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full animate-bounce shadow-lg shadow-green-500/30">
+                                  <span className="inline-block px-3 py-1 bg-green-500 text-white text-[8px] font-black uppercase tracking-[0.2em] rounded-full shadow-lg shadow-green-500/30">
                                     Current
                                   </span>
                                 )}
@@ -229,12 +228,11 @@ const DetailCard = ({ icon, label, value, color }) => {
   };
   const c = colors[color];
   return (
-    <div className="p-8 bg-white rounded-[2.5rem] border border-gray-100 flex items-center gap-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
-      <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full ${c.dot} group-hover:scale-150 transition-transform`} />
+    <div className="p-8 bg-white rounded-[2.5rem] border border-gray-100 flex items-center gap-6 shadow-sm hover:shadow-md transition-all group">
       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg ${c.icon}`}>
         {icon}
       </div>
-      <div className="relative z-10">
+      <div>
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{label}</p>
         <p className="text-lg font-bold text-gray-900 italic">{value}</p>
       </div>

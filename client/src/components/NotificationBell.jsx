@@ -42,14 +42,14 @@ const NotificationBell = () => {
         <HiOutlineBell size={22} />
         {notifications.length > 0 && (
           <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-4 w-96 bg-white shadow-2xl shadow-gray-200/50 rounded-[2.5rem] border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="absolute right-0 mt-4 w-96 bg-white shadow-2xl shadow-gray-200/50 rounded-[2.5rem] border border-gray-100 z-50 overflow-hidden">
           <div className="p-8 border-b border-gray-50 flex justify-between items-center">
             <h3 className="font-black text-gray-900 italic tracking-tighter uppercase">Notifications</h3>
             <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black rounded-full uppercase tracking-widest">{notifications.length} New</span>

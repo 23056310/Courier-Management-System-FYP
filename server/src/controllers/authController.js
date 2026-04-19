@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Parcel from "../models/Parcel.js";
+import Inquiry from "../models/Inquiry.js";
 import { generateToken } from "../utils/generateToken.js";
 
 /* ===============================
@@ -243,17 +245,20 @@ export const getAllUsers = async (req, res) => {
    Admin: Update User Role
 ================================ */
 export const updateUserRole = async (req, res) => {
-  const { role } = req.body;
+  const { role, isVerified, driverStatus } = req.body;
 
   const user = await User.findById(req.params.id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.role = role;
+  if (role) user.role = role;
+  if (isVerified !== undefined) user.isVerified = isVerified;
+  if (driverStatus) user.driverStatus = driverStatus;
+  
   await user.save();
 
-  res.json({ message: "User role updated" });
+  res.json({ message: "User details updated successfully", user });
 };
 
 /* ===============================
@@ -275,37 +280,71 @@ export const deleteUser = async (req, res) => {
 ================================ */
 export const getAdminDashboardStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
-    // Assuming you have a Parcel model imported above or we just don't have these
-    // Since Parcel isn't imported here, let's just return what we have without crashing
+    const [totalUsers, totalParcels, totalDrivers, totalInquiries, recentParcels] = await Promise.all([
+      User.countDocuments(),
+      Parcel.countDocuments(),
+      User.countDocuments({ role: 'driver', driverStatus: 'Active' }),
+      Inquiry.countDocuments({ status: 'Pending' }),
+      Parcel.find().sort({ createdAt: -1 }).limit(5)
+        .populate('assignedDriver', 'name')
+        .populate('customer', 'name'),
+    ]);
     
-    // Recent activity (last 5)
-    const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5).select('name email createdAt');
+    // Calculate performance data (Delivered vs Others)
+    const deliveredCount = await Parcel.countDocuments({ status: 'Delivered' });
+    const inTransitCount = await Parcel.countDocuments({ status: 'In Transit' });
+    const pendingCount = await Parcel.countDocuments({ status: 'Pending' });
+
+    // Calculate revenue (Mocked or based on weight/cost if you have it)
+    const revenueSum = await Parcel.aggregate([
+      { $match: { status: 'Delivered' } },
+      { $group: { _id: null, total: { $sum: "$cost" } } }
+    ]);
+    const totalRevenue = revenueSum.length > 0 ? revenueSum[0].total : 0;
+
+    // Calculate analytics for the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
-    const chartData = [
-      { label: 'Jan', value: 0 }, { label: 'Feb', value: 0 }, { label: 'Mar', value: 0 },
-      { label: 'Apr', value: 0 }, { label: 'May', value: 0 }, { label: 'Jun', value: 0 },
-      { label: 'Jul', value: 0 }, { label: 'Aug', value: 0 }, { label: 'Sep', value: 0 },
-      { label: 'Oct', value: 0 }, { label: 'Nov', value: 0 }, { label: 'Dec', value: 0 },
-    ];
+    const dailyStats = await Parcel.aggregate([
+      { $match: { createdAt: { $gte: sevenDaysAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+
+    // Format for chart (fill missing dates if any)
+    const analytics = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const match = dailyStats.find(s => s._id === dateStr);
+      analytics.push({
+        name: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        parcels: match ? match.count : 0
+      });
+    }
 
     res.json({
       success: true,
       stats: {
         totalUsers,
-        totalHostels: 0, // Mocked to avoid frontend crash if expected
-        totalRooms: 0,
-        totalBookings: 0
+        totalParcels,
+        totalDrivers,
+        totalInquiries,
+        deliveredCount,
+        inTransitCount,
+        pendingCount,
+        totalRevenue
       },
-      recentActivity: {
-        users: recentUsers,
-        hostels: [],
-        bookings: []
-      },
-      chartData
+      analytics
     });
   } catch (error) {
-    console.error("Admin dashboard stats error:", error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

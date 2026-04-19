@@ -40,6 +40,9 @@ export const customerCreateParcel = async (parcelData) => {
 export const getMyParcels = async () => {
   const response = await api.get('/parcels/customer/my-parcels');
   return response.data;
+}; export const getCustomerDashboardStats = async () => {
+  const response = await api.get('/parcels/customer/dashboard/stats');
+  return response.data;
 };
 
 export const customerUpdateParcel = async (id, parcelData) => {
@@ -61,6 +64,9 @@ export const trackParcelByNumber = async (trackingNumber) => {
 // ── DRIVER ───────────────────────────────────────
 export const getDriverParcels = async () => {
   const response = await api.get('/parcels/driver/assigned');
+  return response.data;
+}; export const getDriverDashboardStats = async () => {
+  const response = await api.get('/parcels/driver/dashboard/stats');
   return response.data;
 };
 

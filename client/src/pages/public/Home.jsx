@@ -24,7 +24,7 @@ const Home = () => {
         
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <span className="inline-block mt-3 px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
+            <span className="inline-block mt-8 px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
               Reliable & Secure Shipping
             </span>
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">

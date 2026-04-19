@@ -38,7 +38,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="overflow-x-hidden pt-24 bg-gray-50">
+    <div className="overflow-x-hidden pt-8 bg-gray-50">
       <Navbar />
 
       {/* HERO SECTION */}

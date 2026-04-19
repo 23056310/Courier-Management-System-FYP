@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ["customer", "driver", "admin"], default: "customer" },
   profilePic: { type: String, default: "" }, // optional profile picture
+  isVerified: { type: Boolean, default: false }, // for drivers
+  driverStatus: { type: String, enum: ["Pending", "Active", "Rejected"], default: "Pending" },
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

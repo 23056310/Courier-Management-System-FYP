@@ -260,7 +260,7 @@ const ParcelHistory = () => {
 
       {showFormModal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/80 backdrop-blur-md">
-          <div className="bg-white rounded-[3rem] w-full max-w-4xl p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 animate-in zoom-in duration-300 overflow-y-auto max-h-[90vh] custom-scrollbar">
+          <div className="bg-white rounded-[3rem] w-full max-w-4xl p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 overflow-y-auto max-h-[90vh] custom-scrollbar">
             
             <button 
               onClick={() => setShowFormModal(false)} 

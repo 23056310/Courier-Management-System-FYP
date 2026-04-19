@@ -220,8 +220,16 @@ const ManageParcels = () => {
                         </td>
                         <td className="px-8 py-6">
                           <div 
-                            onClick={() => ['Pending', 'Cancelled'].includes(parcel.status) ? toast.error('Action denied. Please approve the request first or it is cancelled.') : handleOpenAssign(parcel)}
-                            className={`flex items-center gap-3 group/driver p-2 rounded-xl transition-all ${['Pending', 'Cancelled'].includes(parcel.status) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-100'}`}
+                            onClick={() => {
+                              if (['Pending', 'Cancelled'].includes(parcel.status)) {
+                                toast.error('Action denied. Please approve the request first.');
+                              } else if (parcel.assignedDriver) {
+                                toast.error('Driver already assigned. To change, please contact system admin.');
+                              } else {
+                                handleOpenAssign(parcel);
+                              }
+                            }}
+                            className={`flex items-center gap-3 group/driver p-2 rounded-xl transition-all ${(['Pending', 'Cancelled'].includes(parcel.status) || parcel.assignedDriver) ? 'cursor-not-allowed opacity-80' : 'cursor-pointer hover:bg-gray-100'}`}
                           >
                             <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 overflow-hidden relative">
                                {parcel.assignedDriver ? (
@@ -231,15 +239,17 @@ const ManageParcels = () => {
                                    <HiOutlineUser className="text-gray-400" />
                                  )
                                ) : (
-                                 <HiOutlineTruck className="text-gray-400" />
+                                 <HiOutlineTruck className={`text-gray-400 ${parcel.status === 'Approved' ? 'animate-bounce text-orange-400' : ''}`} />
                                )}
-                               {!parcel.assignedDriver && <div className="absolute inset-0 bg-red-500/10 animate-pulse" />}
+                               {!parcel.assignedDriver && parcel.status === 'Approved' && <div className="absolute inset-0 bg-orange-500/10" />}
                             </div>
                             <div>
-                               <p className={`text-[10px] font-black uppercase tracking-widest ${parcel.assignedDriver ? 'text-gray-900' : 'text-red-500'}`}>
-                                 {parcel.assignedDriver ? parcel.assignedDriver.name : "Unassigned"}
+                               <p className={`text-[10px] font-black uppercase tracking-widest ${parcel.assignedDriver ? 'text-green-600' : 'text-orange-500'}`}>
+                                 {parcel.assignedDriver ? parcel.assignedDriver.name : "Awaiting Driver"}
                                </p>
-                               <p className="text-[8px] text-gray-400 font-bold italic">Click to manage driver</p>
+                               <p className="text-[8px] text-gray-400 font-bold italic">
+                                 {parcel.assignedDriver ? "Fleet member synchronized" : "Click to assign member"}
+                               </p>
                             </div>
                           </div>
                         </td>
@@ -286,7 +296,7 @@ const ManageParcels = () => {
           {/* VIEW PARCEL MODAL */}
           {showViewModal && selectedParcel && (
             <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-md">
-              <div className="bg-white rounded-[3rem] w-full max-w-3xl p-10 shadow-2xl relative animate-in zoom-in duration-300">
+              <div className="bg-white rounded-[3rem] w-full max-w-3xl p-10 shadow-2xl relative">
                 <button 
                   onClick={() => setShowViewModal(false)} 
                   className="absolute top-8 right-8 p-3 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all z-20"
@@ -347,21 +357,21 @@ const ManageParcels = () => {
           {/* ASSIGN DRIVER MODAL */}
           {showAssignModal && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/60 backdrop-blur-sm">
-              <div className="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl animate-in fade-in zoom-in duration-300">
+              <div className="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl">
                 <div className="flex justify-between items-center mb-10">
                   <h2 className="text-3xl font-black italic tracking-tighter uppercase text-gray-900">Assign Driver</h2>
                   <button onClick={() => setShowAssignModal(false)} className="p-3 bg-gray-50 rounded-2xl text-gray-400 hover:text-gray-900 transition-all"><HiOutlineX /></button>
                 </div>
 
-                <div className="space-y-4 max-h-[400px] overflow-y-auto px-2 custom-scrollbar">
-                   {drivers.map(driver => (
+                 <div className="space-y-4 max-h-[400px] overflow-y-auto px-2 custom-scrollbar">
+                   {drivers.filter(d => d.driverStatus === 'Active').map(driver => (
                      <div 
                       key={driver._id}
                       onClick={() => handleAssignDriver(driver._id)}
                       className="flex items-center gap-4 p-5 bg-gray-50 rounded-[1.5rem] cursor-pointer hover:bg-primary hover:text-white transition-all group"
                      >
                         <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 border-white group-hover:border-white/20 shadow-sm bg-white text-gray-400">
-                          {driver.profilePic === "/default-avatar.png" ? (
+                          {driver.profilePic === "/default-avatar.png" || !driver.profilePic ? (
                             <HiOutlineUser className="text-2xl" />
                           ) : (
                             <img src={driver.profilePic} className="w-full h-full object-cover" />
@@ -374,7 +384,7 @@ const ManageParcels = () => {
                         <HiOutlinePlus className="text-xl rotate-45 group-hover:rotate-0 transition-transform" />
                      </div>
                    ))}
-                   {drivers.length === 0 && <p className="text-center text-gray-400 font-bold italic py-10">No active drivers found</p>}
+                   {drivers.filter(d => d.driverStatus === 'Active').length === 0 && <p className="text-center text-gray-400 font-bold italic py-10">No active drivers available</p>}
                 </div>
               </div>
             </div>

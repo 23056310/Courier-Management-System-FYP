@@ -1,16 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
 import { HiOutlineChartBar, HiOutlineTrendingUp, HiOutlineCurrencyDollar, HiOutlineCube, HiOutlineTruck, HiOutlineThumbUp, HiOutlineDownload } from "react-icons/hi";
+import { getAdminDashboardStats } from "../../services/authService";
+import { getAllParcels } from "../../services/parcelService";
+import { toast } from "react-hot-toast";
 
 const Reports = () => {
-  const reportData = {
-    totalParcels: "1,245",
-    delivered: "980",
-    inTransit: "180",
-    pending: "85",
-    revenue: "$45,200",
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const res = await getAdminDashboardStats();
+      if (res.success) {
+        setStats(res.stats);
+      }
+    } catch (err) {
+      toast.error("Failed to load analytics data");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const res = await getAllParcels();
+      if (res.success && res.data) {
+        const data = res.data.map(p => ({
+          TrackingNumber: p.trackingNumber,
+          Sender: p.sender.name,
+          Recipient: p.recipient.name,
+          Status: p.status,
+          Weight: p.parcelDetails.weight,
+          Type: p.parcelDetails.type,
+          Date: new Date(p.createdAt).toLocaleDateString()
+        }));
+
+        const headers = Object.keys(data[0]).join(",");
+        const csv = [headers, ...data.map(row => Object.values(row).join(","))].join("\n");
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `Courier_System_Report_${new Date().toLocaleDateString()}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        toast.success("Log Report Exported Successfully");
+      }
+    } catch (err) {
+      toast.error("Failed to export report");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const calculatePercentage = (count) => {
+    if (!stats || stats.totalParcels === 0) return 0;
+    return ((count / stats.totalParcels) * 100).toFixed(1);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col h-screen">
+          <Topbar />
+          <div className="flex-1 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
@@ -25,31 +98,33 @@ const Reports = () => {
                <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Analytics Hub</h1>
                <p className="text-gray-500 font-medium">Strategic insights and real-time performance metrics.</p>
             </div>
-            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-primary transition-all shadow-xl">
-               <HiOutlineDownload className="text-base" /> Export Full Report
+            <button 
+              onClick={handleExport}
+              disabled={exporting}
+              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-primary transition-all shadow-xl disabled:opacity-50"
+            >
+               {exporting ? (
+                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+               ) : (
+                 <HiOutlineDownload className="text-base" />
+               )}
+               {exporting ? "Generating..." : "Export Full Report"}
             </button>
           </div>
 
           {/* STATS GRID */}
-          <div className="grid md:grid-cols-4 gap-6 mb-10">
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
             <ReportStat 
                icon={<HiOutlineCube />} 
                label="Total Volume" 
-               value={reportData.totalParcels} 
+               value={stats?.totalParcels || 0} 
                color="text-primary" 
                bg="bg-primary/5" 
             />
             <ReportStat 
-               icon={<HiOutlineCurrencyDollar />} 
-               label="Gross Revenue" 
-               value={reportData.revenue} 
-               color="text-green-600" 
-               bg="bg-green-50" 
-            />
-            <ReportStat 
                icon={<HiOutlineTrendingUp />} 
                label="Growth Rate" 
-               value="+12.5%" 
+               value="+0.0%" 
                color="text-orange-500" 
                bg="bg-orange-50" 
             />
@@ -70,14 +145,14 @@ const Reports = () => {
                 </h3>
                 
                 <div className="space-y-8">
-                  <PerformanceBar label="Delivered" raw="980" percentage="80" color="bg-green-500" />
-                  <PerformanceBar label="In Transit" raw="180" percentage="15" color="bg-primary" />
-                  <PerformanceBar label="Pending" raw="85" percentage="5" color="bg-red-500" />
+                  <PerformanceBar label="Delivered" raw={stats?.deliveredCount || 0} percentage={calculatePercentage(stats?.deliveredCount)} color="bg-green-500" />
+                  <PerformanceBar label="In Transit" raw={stats?.inTransitCount || 0} percentage={calculatePercentage(stats?.inTransitCount)} color="bg-primary" />
+                  <PerformanceBar label="Pending" raw={stats?.pendingCount || 0} percentage={calculatePercentage(stats?.pendingCount)} color="bg-red-500" />
                 </div>
 
                 <div className="mt-12 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                    <p className="text-xs text-gray-500 font-medium leading-relaxed italic">
-                      "Current delivery efficiency is at an all-time high of 92.4% across urban zones."
+                      "Real-time delivery health indicates {calculatePercentage(stats?.deliveredCount)}% completion rate across all zones."
                    </p>
                 </div>
              </div>
@@ -86,10 +161,10 @@ const Reports = () => {
              <div className="bg-gray-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden">
                 <h3 className="text-xl font-bold mb-8 italic tracking-widest uppercase">Strategic Insights</h3>
                 <div className="space-y-6">
-                   <InsightItem icon={<HiOutlineTrendingUp className="text-green-400" />} text="Revenue increased by 15% due to new international partner hubs." />
-                   <InsightItem icon={<HiOutlineTruck className="text-blue-400" />} text="Average delivery time reduced by 14 minutes in the last 30 days." />
-                   <InsightItem icon={<HiOutlineCube className="text-orange-400" />} text="Highest shipping volume detected from Nepal-China export corridor." />
-                   <InsightItem icon={<HiOutlineThumbUp className="text-purple-400" />} text="Customer lifetime value (CLV) improved by 8% through loyalty rewards." />
+                   <InsightItem icon={<HiOutlineTrendingUp className="text-green-400" />} text={`Platform currently hosting ${stats?.totalUsers || 0} registered identities.`} />
+                   <InsightItem icon={<HiOutlineTruck className="text-blue-400" />} text={`${stats?.totalDrivers || 0} active fleet members currently synchronized.`} />
+                   <InsightItem icon={<HiOutlineCube className="text-orange-400" />} text={`${stats?.totalInquiries || 0} new customer inquiries awaiting administrative clearance.`} />
+                   <InsightItem icon={<HiOutlineThumbUp className="text-purple-400" />} text="System stability optimized for high-volume FYP presentation performance." />
                 </div>
                 
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>

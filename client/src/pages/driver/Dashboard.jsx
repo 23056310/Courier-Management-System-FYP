@@ -1,9 +1,49 @@
-import React from "react";
-import { HiOutlineMap, HiOutlineCheckCircle, HiOutlineClock, HiOutlineClipboardList, HiOutlineChevronRight } from "react-icons/hi";
+import React, { useEffect, useState } from "react";
+import { HiOutlineCheckCircle, HiOutlineClock, HiOutlineClipboardList, HiOutlineTruck, HiOutlinePresentationChartBar } from "react-icons/hi";
 import Sidebar from "../../components/Sidebar";
 import Topbar from "../../components/Topbar";
+import { getDriverDashboardStats } from "../../services/parcelService";
+import { toast } from "react-hot-toast";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [analytics, setAnalytics] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const res = await getDriverDashboardStats();
+      if (res.success) {
+        setStats(res.stats);
+        setAnalytics(res.analytics);
+      }
+    } catch (err) {
+      toast.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col h-screen">
+          <Topbar />
+          <div className="flex-1 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] flex">
       <Sidebar />
@@ -14,85 +54,73 @@ const Dashboard = () => {
         <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
           {/* WELCOME SECTION */}
           <div className="mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 italic">Driver Dashboard</h1>
-            <p className="text-gray-500 font-medium">Hello there! Ready for your deliveries today?</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 italic uppercase tracking-tighter">Fleet Member Dashboard</h1>
+            <p className="text-gray-500 font-medium italic">Ready to make an impact today? Your active route is synchronized.</p>
           </div>
 
           {/* STATS GRID */}
           <div className="grid md:grid-cols-4 gap-6 mb-10">
-            <StatCard 
-              icon={<HiOutlineClipboardList />} 
-              label="Assigned" 
-              value="12" 
-              color="text-primary" 
-              bg="bg-primary/5"
-            />
-            <StatCard 
-              icon={<HiOutlineCheckCircle />} 
-              label="Completed" 
-              value="145" 
-              color="text-green-600" 
-              bg="bg-green-50"
-            />
-            <StatCard 
-              icon={<HiOutlineClock />} 
-              label="In Queue" 
-              value="4" 
-              color="text-orange-500" 
-              bg="bg-orange-50"
-            />
-            <StatCard 
-              icon={<HiOutlineMap />} 
-              label="Total KM" 
-              value="2,450" 
-              color="text-purple-600" 
-              bg="bg-purple-50"
-            />
+            <StatCard icon={<HiOutlineClipboardList />} label="Total Assigned" value={stats?.totalAssigned || 0} color="text-primary" bg="bg-primary/5" />
+            <StatCard icon={<HiOutlineCheckCircle />} label="Successful Clear" value={stats?.completed || 0} color="text-green-600" bg="bg-green-50" />
+            <StatCard icon={<HiOutlineTruck />} label="In Transit" value={stats?.inTransit || 0} color="text-orange-500" bg="bg-orange-50" />
+            <StatCard icon={<HiOutlineClock />} label="Active Tasks" value={stats?.active || 0} color="text-purple-600" bg="bg-purple-50" />
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* CURRENT ASSIGNMENTS */}
-            <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-xl font-bold text-gray-900 italic">Active Assignments</h2>
-                <button className="text-primary text-sm font-bold hover:underline">View Schedule</button>
+          {/* ANALYTICS SECTION */}
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 shadow-sm relative overflow-hidden mb-10">
+            <div className="flex justify-between items-center mb-10">
+              <div>
+                <h2 className="text-xl font-black text-gray-900 italic uppercase tracking-tighter">Delivery Performance Log</h2>
+                <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Successful deliveries over the last 7 days</p>
               </div>
-
-              <div className="space-y-6">
-                <AssignmentItem 
-                  id="CMS-7890"
-                  location="Baneshwor -> Patan"
-                  priority="High"
-                  time="ETA: 30 mins"
-                />
-                <AssignmentItem 
-                  id="CMS-7891"
-                  location="Koteshwor -> Bhaktapur"
-                  priority="Normal"
-                  time="ETA: 1.5 hours"
-                />
-                <AssignmentItem 
-                  id="CMS-7892"
-                  location="Chabahil -> Boudha"
-                  priority="Urgent"
-                  time="ETA: 15 mins"
-                />
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 italic">Sync Active</span>
               </div>
             </div>
 
-            {/* DRIVER RANKING / STATS */}
-            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm flex flex-col items-center text-center">
-               <div className="w-24 h-24 bg-gradient-to-tr from-primary to-blue-400 rounded-3xl flex items-center justify-center text-white text-4xl font-black mb-6 shadow-xl shadow-primary/20 rotate-3 group-hover:rotate-0 transition-transform">
-                 <HiOutlineCheckCircle />
-               </div>
-               <h3 className="text-xl font-bold text-gray-900 mb-2 italic">Excellent Performance</h3>
-               <p className="text-sm text-gray-500 leading-relaxed mb-8">You've completed 98% of deliveries on time this month. Keep it up!</p>
-               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-8">
-                  <div className="w-[98%] h-full bg-primary rounded-full shadow-[0_0_10px_rgba(37,99,235,0.4)]" />
-               </div>
-               <button className="w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-black transition-all">
-                 View Detailed Analytics
-               </button>
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={analytics}>
+                  <defs>
+                    <linearGradient id="colorDeliveries" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4158D0" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#C850C0" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} 
+                    dy={15}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 900}} 
+                  />
+                  <Tooltip 
+                    contentStyle={{borderRadius: '1.5rem', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', fontWeight: 'bold'}}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="deliveries" 
+                    stroke="#4158D0" 
+                    strokeWidth={4} 
+                    fillOpacity={1} 
+                    fill="url(#colorDeliveries)" 
+                    animationDuration={2000}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-10 grid md:grid-cols-3 gap-6">
+              <InsightMini icon={<HiOutlinePresentationChartBar />} label="Weekly Goal" value="On Track" />
+              <InsightMini icon={<HiOutlineCheckCircle />} label="Reliability" value="99.2%" />
+              <InsightMini icon={<HiOutlineClipboardList />} label="Peak Activity" value={analytics.reduce((max, obj) => obj.deliveries > max.deliveries ? obj : max, analytics[0] || {name: 'N/A'}).name} />
             </div>
           </div>
         </main>
@@ -111,25 +139,12 @@ const StatCard = ({ icon, label, value, color, bg }) => (
   </div>
 );
 
-const AssignmentItem = ({ id, location, priority, time }) => (
-  <div className="flex items-center gap-6 p-5 rounded-2xl border border-gray-50 hover:border-primary/20 hover:bg-primary/5 transition-all group">
-    <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-      <HiOutlineMap className="text-xl" />
-    </div>
-    <div className="flex-1">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="font-black text-gray-900 text-sm">{id}</span>
-        <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${
-          priority === 'Urgent' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
-        }`}>
-          {priority}
-        </span>
-      </div>
-      <p className="text-xs text-gray-500 font-bold">{location}</p>
-    </div>
-    <div className="text-right">
-      <p className="text-xs font-black text-primary uppercase mb-1">{time}</p>
-      <button className="text-[10px] font-black underline underline-offset-2 hover:text-primary transition-colors">START TRIP</button>
+const InsightMini = ({ icon, label, value }) => (
+  <div className="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+    <div className="text-xl text-primary">{icon}</div>
+    <div>
+      <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">{label}</p>
+      <p className="text-xs font-bold text-gray-900 italic">{value}</p>
     </div>
   </div>
 );

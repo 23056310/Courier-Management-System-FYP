@@ -13,28 +13,31 @@ const About = () => {
       <Navbar />
 
       {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 px-6 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+        {/* Background Elements to match Home */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50/30 -z-10" />
+        <div className="absolute -right-20 -top-20 w-[600px] h-[600px] bg-primary rounded-full blur-[120px] -z-10 opacity-10" />
+
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
               Our Story
             </span>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
               Empowering Global <br />
               <span className="text-primary italic">Connections.</span>
             </h1>
-            <p className="text-lg text-gray-500 max-w-xl leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-xl leading-relaxed mb-8">
               {siteName} started with a simple goal: to make logistics effortless. Today, 
               we are a leading platform connecting thousands of businesses and individuals 
               through a smart, reliable, and secure courier network.
             </p>
           </div>
           <div className="relative">
-            <div className="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl -z-10" />
             <img 
-              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=800" 
+              src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=1000" 
               alt={`${siteName} Team`} 
-              className="rounded-3xl shadow-2xl"
+              className="rounded-3xl shadow-2xl relative z-10 border-4 border-white/10"
             />
           </div>
         </div>
