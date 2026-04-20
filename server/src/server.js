@@ -3,16 +3,16 @@ import 'dotenv/config';
 
 // ✅ DNS FIX FOR MONGODB SRV LOOKUP
 import dns from "dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]); // Google DNS (stable)
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
-// Import packages
+// Core packages
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import http from 'http';
-import { Server } from 'socket.io';
-import { initSocket } from './config/socket.js';
 
+// Socket
+import { initSocket } from './config/socket.js';
 
 // DB + Routes
 import connectDB from './config/db.js'; 
@@ -22,40 +22,51 @@ import websiteSettingsRoutes from './routes/websiteSettingsRoutes.js';
 import parcelRoutes from './routes/parcelRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 
-
-
-// Express app + HTTP server
+// Init app
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 8000;
 
-// ✅ Socket.IO setup
-initSocket(server);
+// ✅ IMPORTANT: Render PORT
+const PORT = process.env.PORT || 5000;
 
+console.log("✅ Server file loaded...");
 
-// Connect MongoDB
-connectDB();
-
-// Middleware
-app.use(cors());
+// ================= MIDDLEWARE =================
+app.use(cors({
+  origin: "*", // later replace with frontend URL
+}));
 app.use(express.json());
 
-// Static uploads
-app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
+// ================= STATIC =================
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use("/api/inquiries", inquiryRoutes);
-app.use("/api/settings", websiteSettingsRoutes);
-app.use("/api/parcels", parcelRoutes);
-app.use("/api/notifications", notificationRoutes);
-
-
+// ================= ROUTES =================
 app.get('/', (req, res) => {
   res.send('🚀 Courier Management System Backend is running!');
 });
 
-// Start server
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/settings', websiteSettingsRoutes);
+app.use('/api/parcels', parcelRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// ================= SOCKET =================
+initSocket(server);
+
+// ================= START SERVER SAFELY =================
+const startServer = async () => {
+  try {
+    await connectDB(); // wait for DB connection
+
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("❌ Failed to start server:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -1,4 +1,4 @@
-import WebsiteSettings from "../models/websiteSettings.js";
+import WebsiteSettings from "../models/WebsiteSettings.js";
 
 // GET settings (Public/Admin)
 export const getSettings = async (req, res) => {
