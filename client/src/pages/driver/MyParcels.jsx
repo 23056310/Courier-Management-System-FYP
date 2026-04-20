@@ -83,21 +83,21 @@ const MyParcels = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
 
           {/* HEADER */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-10 gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 italic">My Delivery Tasks</h1>
-              <p className="text-gray-500 font-medium">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic">My Delivery Tasks</h1>
+              <p className="text-gray-500 font-medium text-sm">
                 {activeParcels.length} active · {completedParcels.length} completed
               </p>
             </div>
-            <div className="flex gap-3">
-              <button onClick={fetchParcels} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+            <div className="flex gap-2 sm:gap-3 w-full md:w-auto">
+              <button onClick={fetchParcels} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineRefresh /> Refresh
               </button>
-              <button onClick={exportDriverCSV} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+              <button onClick={exportDriverCSV} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineDownload /> Export
               </button>
             </div>
@@ -109,7 +109,7 @@ const MyParcels = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
             </div>
           ) : parcels.length === 0 ? (
-            <div className="py-24 text-center bg-white rounded-[2.5rem] border border-gray-100 border-dashed">
+            <div className="py-24 text-center bg-white rounded-3xl sm:rounded-[2.5rem] border border-gray-100 border-dashed p-8">
               <HiOutlineTruck className="text-5xl text-gray-200 mx-auto mb-4" />
               <p className="text-gray-400 font-bold italic">No parcels assigned to you yet.</p>
             </div>
@@ -117,21 +117,21 @@ const MyParcels = () => {
             <>
               {/* ACTIVE PARCELS */}
               {activeParcels.length > 0 && (
-                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden mb-8">
-                  <div className="px-8 py-6 border-b border-gray-50 flex items-center gap-3">
+                <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden mb-8">
+                  <div className="px-6 sm:px-8 py-6 border-b border-gray-50 flex items-center gap-3">
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                     <h2 className="font-black text-[10px] uppercase tracking-[0.2em] text-gray-500">Active Deliveries</h2>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                  <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-left min-w-[1000px]">
                       <thead>
                         <tr className="border-b border-gray-50 bg-gray-50/50">
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Parcel</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Sender</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Receiver</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Last Update</th>
-                          <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Action</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Parcel</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Sender</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Receiver</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Status</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Last Update</th>
+                          <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">

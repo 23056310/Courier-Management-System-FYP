@@ -1,21 +1,31 @@
 import React, { useContext } from "react";
-import { HiOutlineHome, HiOutlineBell } from "react-icons/hi";
+import { HiOutlineHome, HiOutlineBell, HiMenuAlt1 } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext"; 
+import { AuthContext } from "../context/AuthContext";
+import { useLayout } from "../context/LayoutContext";
 import NotificationBadge from "./NotificationBell";
 
 export default function Topbar() {
   const { user } = useContext(AuthContext);
+  const { toggleSidebar } = useLayout();
 
   return (
-    <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4 flex justify-between items-center sticky top-0 z-40">
+    <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-40">
       {/* Left side actions */}
       <div className="flex items-center gap-3">
+        {/* Mobile Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+        >
+          <HiMenuAlt1 className="text-2xl" />
+        </button>
+
         {/* Mobile Logo */}
-        <div className="md:hidden block">
-           <Link to="/" className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-              <span className="font-bold italic">C</span>
-           </Link>
+        <div className="hidden sm:block lg:hidden">
+          <Link to="/" className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+            <span className="font-bold italic">C</span>
+          </Link>
         </div>
         {/* Home Navigation */}
         <Link to="/" className="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-primary hover:bg-primary/5 transition-all outline-none">
@@ -46,12 +56,11 @@ export default function Topbar() {
                 alt={user.name || "User"}
                 className="w-11 h-11 rounded-full border-2 border-gray-50 object-cover shadow-sm group-hover:shadow-md transition-shadow"
               />
-              <div 
-                className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full ${
-                  user.role === 'driver' 
+              <div
+                className={`absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full ${user.role === 'driver'
                     ? (user.driverStatus === 'Active' ? "bg-green-500" : "bg-red-500")
                     : "bg-green-500"
-                }`} 
+                  }`}
               />
             </div>
           </div>

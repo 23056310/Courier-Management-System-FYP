@@ -118,45 +118,45 @@ const Settings = () => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
           {loading ? (
             <div className="flex-1 flex items-center justify-center min-h-[400px]">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-10 gap-6">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Platform Master Settings</h1>
-                  <p className="text-gray-500 font-medium">Global configuration for your courier management network.</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase leading-tight">Platform Master Settings</h1>
+                  <p className="text-gray-500 font-medium text-sm">Global configuration for your courier management network.</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
                   <button 
                     onClick={handleReset}
-                    className="px-6 py-4 bg-white text-gray-400 font-black uppercase tracking-[0.2em] rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all text-[10px] border border-gray-100 flex items-center gap-2"
+                    className="w-full sm:w-auto px-6 py-4 bg-white text-gray-400 font-black uppercase tracking-[0.2em] rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all text-[10px] border border-gray-100 flex items-center justify-center gap-2"
                   >
                     <HiOutlineRefresh /> Reset Defaults
                   </button>
                   <button 
                     onClick={handleSave}
                     disabled={saving}
-                    className="px-10 py-4 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3 text-sm disabled:opacity-50"
+                    className="w-full sm:w-auto px-10 py-4 bg-gray-900 text-white font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-primary transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3 text-sm disabled:opacity-50"
                   >
                     <HiOutlineSave className="text-lg" /> {saving ? "Saving..." : "Save Configuration"}
                   </button>
                 </div>
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-10">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 pb-10">
                 {/* MAIN SETTINGS */}
-                <div className="lg:col-span-2 space-y-10">
+                <div className="lg:col-span-2 space-y-8 sm:space-y-10">
                   
                   {/* PRIMARY CONTACT DETAILS */}
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
+                  <div className="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
                       <HiOutlineGlobeAlt className="text-primary" /> Core Information
                     </h3>
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                       <SettingInput 
                         label="Platform Name" 
                         icon={<HiOutlineGlobeAlt />} 
@@ -190,11 +190,11 @@ const Settings = () => {
                   </div>
 
                   {/* SOCIAL MEDIA CONNECTIONS */}
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
+                  <div className="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
                       <HiOutlineShare className="text-primary" /> Social Media Links
                     </h3>
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                       <SettingInput 
                         label="Facebook URL" 
                         icon={<HiOutlineShare />} 
@@ -231,8 +231,8 @@ const Settings = () => {
                   </div>
 
                   {/* FOOTER & SEO */}
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
+                  <div className="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
                       <HiOutlineAnnotation className="text-primary" /> Footer & Metadata
                     </h3>
                     <div className="space-y-8">
@@ -259,11 +259,11 @@ const Settings = () => {
                 </div>
 
                 {/* QUICK ACTIONS & BRANDING */}
-                <div className="space-y-10">
+                <div className="space-y-8 sm:space-y-10">
                   {/* BRANDING PREVIEW */}
-                  <div className="bg-gray-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group">
+                  <div className="bg-gray-900 rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 text-white relative overflow-hidden group">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/40 transition-colors"></div>
-                      <h4 className="text-lg font-bold mb-10 italic tracking-widest uppercase flex items-center gap-2">
+                      <h4 className="text-lg font-bold mb-8 sm:mb-10 italic tracking-widest uppercase flex items-center gap-2">
                         <HiOutlineCamera className="text-primary" /> Branding
                       </h4>
                       <div className="flex flex-col items-center text-center">

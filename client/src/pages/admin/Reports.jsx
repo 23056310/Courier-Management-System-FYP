@@ -92,16 +92,16 @@ const Reports = () => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-10 gap-6">
             <div>
-               <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Analytics Hub</h1>
-               <p className="text-gray-500 font-medium">Strategic insights and real-time performance metrics.</p>
+               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase leading-tight">Analytics Hub</h1>
+               <p className="text-gray-500 font-medium text-sm">Strategic insights and real-time performance metrics.</p>
             </div>
             <button 
               onClick={handleExport}
               disabled={exporting}
-              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-primary transition-all shadow-xl disabled:opacity-50"
+              className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-primary transition-all shadow-xl disabled:opacity-50"
             >
                {exporting ? (
                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
@@ -113,7 +113,7 @@ const Reports = () => {
           </div>
 
           {/* STATS GRID */}
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             <ReportStat 
                icon={<HiOutlineCube />} 
                label="Total Volume" 
@@ -137,9 +137,9 @@ const Reports = () => {
             />
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 pb-10">
              {/* PERFORMANCE CHART SIMULATION */}
-             <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden">
+             <div className="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm relative overflow-hidden">
                 <h3 className="text-xl font-bold text-gray-900 mb-8 italic flex items-center gap-3">
                    <HiOutlineChartBar className="text-primary" /> Delivery Performance
                 </h3>
@@ -158,7 +158,7 @@ const Reports = () => {
              </div>
 
              {/* KEY INSIGHTS */}
-             <div className="bg-gray-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden">
+             <div className="bg-gray-900 rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 text-white relative overflow-hidden">
                 <h3 className="text-xl font-bold mb-8 italic tracking-widest uppercase">Strategic Insights</h3>
                 <div className="space-y-6">
                    <InsightItem icon={<HiOutlineTrendingUp className="text-green-400" />} text={`Platform currently hosting ${stats?.totalUsers || 0} registered identities.`} />

@@ -77,24 +77,24 @@ const CreateParcel = () => {
         <Sidebar />
         <div className="flex-1 flex flex-col h-screen overflow-hidden">
           <Topbar />
-          <main className="flex-1 overflow-y-auto p-8 custom-scrollbar flex items-center justify-center">
+          <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar flex items-center justify-center">
             <div className="max-w-lg w-full text-center">
-              <div className="bg-white rounded-[3rem] p-14 border border-gray-100 shadow-sm relative overflow-hidden">
+              <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-14 border border-gray-100 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-green-400 to-primary bg-[length:200%] animate-pulse" />
-                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 text-green-500 text-4xl">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 text-green-500 text-3xl sm:text-4xl">
                   <HiOutlineCheckCircle />
                 </div>
-                <h2 className="text-3xl font-black text-gray-900 italic uppercase tracking-tighter mb-4">
+                <h2 className="text-2xl sm:text-3xl font-black text-gray-900 italic uppercase tracking-tighter mb-4">
                   Parcel Booked!
                 </h2>
-                <p className="text-gray-500 font-medium mb-10">
+                <p className="text-gray-500 font-medium mb-8 sm:mb-10 text-sm">
                   Your parcel request has been submitted. Keep your tracking ID safe.
                 </p>
-                <div className="p-6 bg-primary/5 border border-primary/10 rounded-2xl mb-8">
+                <div className="p-5 sm:p-6 bg-primary/5 border border-primary/10 rounded-2xl mb-8">
                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">Tracking ID</p>
-                  <p className="text-2xl font-black text-primary tracking-widest">{trackingResult}</p>
+                  <p className="text-xl sm:text-2xl font-black text-primary tracking-widest">{trackingResult}</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <button
                     onClick={() => navigate(`/customer/track-parcel?id=${trackingResult}`)}
                     className="flex-1 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-900 transition-all"
@@ -121,21 +121,21 @@ const CreateParcel = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
           <div className="max-w-4xl mx-auto">
-            <div className="mb-10">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 italic">Create Parcel Request</h1>
-              <p className="text-gray-500 font-medium">Fill in the details below to book a new delivery.</p>
+            <div className="mb-8 sm:mb-10">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic">Create Parcel Request</h1>
+              <p className="text-gray-500 font-medium text-sm">Fill in the details below to book a new delivery.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
               {/* SENDER DETAILS */}
               <SectionCard
                 color="primary"
                 icon={<HiOutlineUser />}
                 title="Sender Information"
               >
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <FormField label="Full Name" name="senderName" value={formData.senderName} onChange={handleChange} placeholder="Your name" required />
                   <FormField label="Phone Number" name="senderPhone" value={formData.senderPhone} onChange={handleChange} placeholder="+977-98XXXXXXXX" required />
                   <div className="md:col-span-2">
@@ -149,7 +149,7 @@ const CreateParcel = () => {
 
               {/* RECIPIENT DETAILS */}
               <SectionCard color="orange" icon={<HiOutlineLocationMarker />} title="Recipient Information">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <FormField label="Full Name" name="recipientName" value={formData.recipientName} onChange={handleChange} placeholder="Receiver's name" required accentColor="orange" />
                   <FormField label="Phone Number" name="recipientPhone" value={formData.recipientPhone} onChange={handleChange} placeholder="+977-98XXXXXXXX" required accentColor="orange" />
                   <div className="md:col-span-2">
@@ -163,7 +163,7 @@ const CreateParcel = () => {
 
               {/* PARCEL DETAILS */}
               <SectionCard color="purple" icon={<HiOutlineCube />} title="Parcel Details">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Parcel Type</label>
                     <select
@@ -204,16 +204,16 @@ const CreateParcel = () => {
               </SectionCard>
 
               {/* SUBMIT */}
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-10 bg-gray-900 rounded-[2.5rem] shadow-xl">
-                <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-white text-3xl">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 sm:p-10 bg-gray-900 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl">
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/10 rounded-2xl flex items-center justify-center text-white text-2xl sm:text-3xl">
                     <HiOutlineTruck />
                   </div>
                   <div>
-                    <p className="text-gray-400 text-xs font-black uppercase tracking-[0.2em] mb-1">
+                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">
                       {formData.deliveryMethod} Delivery
                     </p>
-                    <p className="text-white font-bold italic">
+                    <p className="text-white font-bold italic text-sm">
                       {formData.deliveryMethod === "Express" ? "Same Day Delivery" : "Estimated 2-3 Days"}
                     </p>
                   </div>
@@ -242,12 +242,12 @@ const colorMap = {
 const SectionCard = ({ color, icon, title, children }) => {
   const c = colorMap[color];
   return (
-    <div className="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
-      <div className="flex items-center gap-4 mb-8">
-        <div className={`w-12 h-12 ${c.bg} rounded-2xl flex items-center justify-center text-white text-xl shadow-lg ${c.shadow}`}>
+    <div className="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 border border-gray-100 shadow-sm relative overflow-hidden group">
+      <div className="flex items-center gap-4 mb-6 sm:mb-8">
+        <div className={`w-10 h-10 sm:w-12 sm:h-12 ${c.bg} rounded-2xl flex items-center justify-center text-white text-lg sm:text-xl shadow-lg ${c.shadow} shrink-0`}>
           {icon}
         </div>
-        <h2 className="text-xl font-bold text-gray-900 italic">{title}</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 italic">{title}</h2>
       </div>
       {children}
     </div>

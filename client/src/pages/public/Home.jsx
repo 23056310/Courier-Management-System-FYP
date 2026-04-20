@@ -24,19 +24,19 @@ const Home = () => {
         
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <span className="inline-block mt-8 px-4 py-1.5 bg-primary/10 text-primary text-sm font-bold rounded-full mb-6">
+            <span className="inline-block mt-8 px-4 py-1.5 bg-primary/10 text-primary text-xs sm:text-sm font-bold rounded-full mb-4 sm:mb-6 uppercase tracking-widest">
               Reliable & Secure Shipping
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 leading-[1.1] mb-6 tracking-tighter">
               Modern Logistics <br />
               <span className="text-primary italic">Redefined.</span>
             </h1>
-            <p className="text-lg text-gray-600 mb-8 max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-xl leading-relaxed font-medium">
               Experience the next generation of courier management. Fast, transparent, 
               and global delivery solutions tailored for your business and personal needs.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/register" className="btn-primary flex items-center gap-2">
+              <Link to="/register" className="w-full sm:w-auto btn-primary flex items-center justify-center gap-2 px-10 py-5 rounded-2xl shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all">
                 Get Started <HiChevronRight className="text-xl" />
               </Link>
             </div>
@@ -55,16 +55,16 @@ const Home = () => {
           </div>
 
           {/* Hero Image / Illustration */}
-          <div className="relative">
+          <div className="relative mt-12 md:mt-0">
+            <div className="absolute inset-0 bg-primary/20 rounded-3xl blur-3xl opacity-20 -z-10" />
             <img 
               src="https://images.unsplash.com/photo-1570225324221-49c73ecca0a2?q=80&w=1000" 
               alt="Global Air Logistics"
-              className="rounded-3xl shadow-2xl relative z-10 border-4 border-white/10"
+              className="rounded-3xl shadow-2xl relative z-10 border-4 border-white/10 w-full object-cover aspect-square sm:aspect-video md:aspect-auto"
               onError={(e) => {
                 e.target.src = "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?q=80&w=1000";
               }}
             />
-           
           </div>
         </div>
       </section>
@@ -72,18 +72,18 @@ const Home = () => {
       
 
       {/* SERVICES SECTION */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      <section className="py-20 sm:py-24 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
             Premium Logistics Services
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-gray-500 max-w-2xl mx-auto font-medium">
             We offer a wide range of services designed to meet your every shipping need, 
             from local city deliveries to international cargo.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <ServiceCard 
             icon={<HiOutlineLightningBolt />} 
             title="Express Delivery" 

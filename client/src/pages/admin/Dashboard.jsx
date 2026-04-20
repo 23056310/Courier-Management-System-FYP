@@ -51,15 +51,15 @@ const Dashboard = () => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
           {/* WELCOME SECTION */}
-          <div className="mb-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 italic uppercase tracking-tighter">Admin Command Center</h1>
-            <p className="text-gray-500 font-medium">Monitoring the pulse of our logistics network.</p>
+          <div className="mb-6 sm:mb-10">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic uppercase tracking-tighter leading-tight">Admin Command Center</h1>
+            <p className="text-gray-500 font-medium text-sm">Monitoring the pulse of our logistics network.</p>
           </div>
 
           {/* STATS GRID */}
-          <div className="grid md:grid-cols-4 gap-6 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
             <StatCard icon={<HiOutlineCube />} label="Total Parcels" value={stats?.totalParcels || 0} color="text-primary" bg="bg-primary/5" />
             <StatCard icon={<HiOutlineTruck />} label="Active Drivers" value={stats?.totalDrivers || 0} color="text-green-600" bg="bg-green-50" />
             <StatCard icon={<HiOutlineUsers />} label="System Users" value={stats?.totalUsers || 0} color="text-purple-600" bg="bg-purple-50" />
@@ -67,8 +67,8 @@ const Dashboard = () => {
           </div>
 
           {/* ANALYTICS SECTION */}
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 shadow-sm relative overflow-hidden">
-            <div className="flex justify-between items-center mb-10">
+          <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-gray-100 p-6 sm:p-10 shadow-sm relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
               <div>
                 <h2 className="text-xl font-black text-gray-900 italic uppercase tracking-tighter">Logistics Flow Analysis</h2>
                 <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Daily Shipment Volume over the last 7 days</p>
@@ -79,7 +79,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="h-[400px] w-full">
+            <div className="h-[300px] sm:h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={analytics}>
                   <defs>
@@ -117,7 +117,7 @@ const Dashboard = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-10 grid md:grid-cols-3 gap-6">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
               <InsightMini icon={<HiOutlinePresentationChartBar />} label="Trend" value="Upward (+12%)" />
               <InsightMini icon={<HiOutlineTruck />} label="Fleet Efficiency" value="98.4%" />
               <InsightMini icon={<HiOutlineCube />} label="Peak Day" value={analytics.reduce((max, obj) => obj.parcels > max.parcels ? obj : max, analytics[0] || {name: 'N/A'}).name} />
@@ -130,18 +130,18 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ icon, label, value, color, bg }) => (
-  <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
-    <div className={`w-12 h-12 ${bg} ${color} rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform`}>
+  <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+    <div className={`w-12 h-12 ${bg} ${color} rounded-xl flex items-center justify-center text-2xl mb-4 sm:mb-6 group-hover:scale-110 transition-transform`}>
       {icon}
     </div>
-    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{label}</p>
-    <p className={`text-3xl font-black ${color}`}>{value}</p>
+    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{label}</p>
+    <p className={`text-2xl sm:text-3xl font-black ${color}`}>{value}</p>
   </div>
 );
 
 const InsightMini = ({ icon, label, value }) => (
-  <div className="flex items-center gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
-    <div className="text-xl text-primary">{icon}</div>
+  <div className="flex items-center gap-4 p-4 sm:p-5 bg-gray-50 rounded-2xl border border-gray-100">
+    <div className="text-xl text-primary shrink-0">{icon}</div>
     <div>
       <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">{label}</p>
       <p className="text-xs font-bold text-gray-900 italic">{value}</p>

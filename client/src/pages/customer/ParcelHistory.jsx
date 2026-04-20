@@ -118,24 +118,24 @@ const ParcelHistory = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
 
           {/* HEADER */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-10 gap-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 italic">My Parcels</h1>
-              <p className="text-gray-500 font-medium">{parcels.length} total shipments in your account</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic">My Parcels</h1>
+              <p className="text-gray-500 font-medium text-sm">{parcels.length} total shipments in your account</p>
             </div>
-            <div className="flex gap-3 flex-wrap">
-              <button onClick={fetchParcels} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+            <div className="flex gap-2 sm:gap-3 flex-wrap w-full md:w-auto">
+              <button onClick={fetchParcels} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineRefresh /> Refresh
               </button>
-              <button onClick={exportCustomerCSV} className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
+              <button onClick={exportCustomerCSV} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-gray-600 hover:bg-gray-50 transition-all text-sm shadow-sm">
                 <HiOutlineDownload /> Export
               </button>
               <button
                 onClick={() => navigate("/customer/create-parcel")}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-primary transition-all shadow-lg"
+                className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-primary transition-all shadow-lg"
               >
                 <HiOutlinePlus /> New Parcel
               </button>
@@ -172,13 +172,13 @@ const ParcelHistory = () => {
           </div>
 
           {/* TABLE */}
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[300px]">
+          <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[300px]">
             {loading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
               </div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+              <div className="flex flex-col items-center justify-center h-64 text-gray-400 p-8 text-center">
                 <HiOutlineCube className="text-5xl mb-4" />
                 <p className="font-bold italic">No parcels found</p>
                 <button
@@ -189,8 +189,8 @@ const ParcelHistory = () => {
                 </button>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
+              <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left min-w-[1000px]">
                   <thead>
                     <tr className="border-b border-gray-50 bg-gray-50/50">
                       <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Tracking</th>
@@ -274,24 +274,24 @@ const ParcelHistory = () => {
       </div>
 
       {showFormModal && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-gray-900/80 backdrop-blur-md">
-          <div className="bg-white rounded-[3rem] w-full max-w-4xl p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 overflow-y-auto max-h-[90vh] custom-scrollbar">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 bg-gray-900/80 backdrop-blur-md">
+          <div className="bg-white rounded-3xl sm:rounded-[3rem] w-full max-w-4xl p-6 sm:p-12 shadow-2xl relative overflow-hidden border border-gray-100 scale-100 overflow-y-auto max-h-[90vh] custom-scrollbar">
             
             <button 
               onClick={() => setShowFormModal(false)} 
-              className="absolute top-8 right-8 p-4 bg-gray-50 rounded-[1.25rem] text-gray-400 hover:text-gray-900 transition-all z-20"
+              className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 sm:p-4 bg-gray-50 rounded-xl sm:rounded-[1.25rem] text-gray-400 hover:text-gray-900 transition-all z-20"
             >
-              <HiOutlineX className="text-2xl" />
+              <HiOutlineX className="text-xl sm:text-2xl" />
             </button>
 
-            <div className="mb-12">
-               <h2 className="text-4xl font-black italic tracking-tighter uppercase text-gray-900 mb-2">
+            <div className="mb-8 sm:mb-12">
+               <h2 className="text-2xl sm:text-4xl font-black italic tracking-tighter uppercase text-gray-900 mb-2 leading-tight">
                  Update Shipment
                </h2>
-               <p className="text-gray-500 font-medium">Modify your pending parcel details before dispatch.</p>
+               <p className="text-gray-500 font-medium text-sm">Modify your pending parcel details before dispatch.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-12">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                {/* SENDER INFO */}
                <div className="space-y-6">
                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-2 italic flex items-center gap-2">
@@ -315,7 +315,7 @@ const ParcelHistory = () => {
                </div>
 
                {/* PARCEL DETAILS */}
-               <div className="md:col-span-2 grid md:grid-cols-3 gap-8 p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100">
+               <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 p-6 sm:p-8 bg-gray-50 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100">
                   <div className="relative">
                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 block ml-1">Weight (kg)</label>
                     <input 

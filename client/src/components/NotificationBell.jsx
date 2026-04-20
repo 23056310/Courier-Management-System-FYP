@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { 
-  HiOutlineBell, 
-  HiOutlineClock, 
-  HiOutlineCheckCircle, 
-  HiOutlineTruck, 
-  HiOutlineChevronRight, 
-  HiOutlineTrash, 
-  HiOutlineMailOpen 
+import {
+  HiOutlineBell,
+  HiOutlineClock,
+  HiOutlineCheckCircle,
+  HiOutlineTruck,
+  HiOutlineChevronRight,
+  HiOutlineTrash,
+  HiOutlineMailOpen
 } from "react-icons/hi";
 import { useNotifications } from "../context/NotificationContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,12 +15,12 @@ import { useNavigate } from "react-router-dom";
 
 const NotificationBell = () => {
   const [open, setOpen] = useState(false);
-  const { 
-    notifications, 
-    unreadCount, 
-    markAsRead, 
-    markAllAsRead, 
-    deleteNotification 
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification
   } = useNotifications();
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -62,11 +62,10 @@ const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className={`relative p-3 rounded-2xl transition-all duration-300 ${
-          open 
-            ? "bg-primary text-white shadow-lg shadow-primary/20 scale-105" 
+        className={`relative p-3 rounded-2xl transition-all duration-300 ${open
+            ? "bg-primary text-white shadow-lg shadow-primary/20 scale-105"
             : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-        }`}
+          }`}
       >
         <HiOutlineBell size={22} />
         {unreadCount > 0 && (
@@ -79,7 +78,7 @@ const NotificationBell = () => {
 
       <AnimatePresence>
         {open && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 15, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
@@ -94,7 +93,7 @@ const NotificationBell = () => {
               </div>
               <div className="flex gap-2">
                 {unreadCount > 0 && (
-                  <button 
+                  <button
                     onClick={() => markAllAsRead()}
                     className="p-2 hover:bg-primary/10 text-primary rounded-xl transition-colors"
                     title="Mark all as read"
@@ -118,9 +117,8 @@ const NotificationBell = () => {
                   {notifications.slice(0, 2).map((n) => (
                     <div
                       key={n._id}
-                      className={`p-4 rounded-[1.5rem] transition-all group relative border ${
-                        n.read ? "bg-white border-transparent" : "bg-primary/5 border-primary/10"
-                      }`}
+                      className={`p-4 rounded-[1.5rem] transition-all group relative border ${n.read ? "bg-white border-transparent" : "bg-primary/5 border-primary/10"
+                        }`}
                     >
                       <div className="flex gap-4">
                         <div className={`w-12 h-12 ${getBg(n.type)} rounded-2xl flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform`}>
@@ -136,17 +134,17 @@ const NotificationBell = () => {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 font-medium leading-relaxed line-clamp-2">{n.message}</p>
-                          
+
                           <div className="mt-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             {!n.read && (
-                              <button 
+                              <button
                                 onClick={() => markAsRead(n._id)}
                                 className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
                               >
                                 Mark as Read
                               </button>
                             )}
-                            <button 
+                            <button
                               onClick={() => deleteNotification(n._id)}
                               className="text-[10px] font-black uppercase tracking-widest text-red-500 hover:underline flex items-center gap-1"
                             >
@@ -164,7 +162,7 @@ const NotificationBell = () => {
               )}
             </div>
 
-            <button 
+            <button
               onClick={() => { setOpen(false); navigate("/notifications"); }}
               className="w-full p-6 text-center text-primary font-black uppercase tracking-widest text-[11px] hover:bg-gray-50 border-t border-gray-50 transition-colors flex items-center justify-center gap-2"
             >

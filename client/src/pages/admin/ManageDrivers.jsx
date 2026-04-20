@@ -62,11 +62,11 @@ const ManageDrivers = () => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <Topbar />
 
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 sm:mb-10 gap-6">
             <div>
-               <h1 className="text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase">Fleet Management</h1>
-               <p className="text-gray-500 font-medium">Manage your delivery personnel and track their active workloads.</p>
+               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 italic tracking-tighter uppercase leading-tight">Fleet Management</h1>
+               <p className="text-gray-500 font-medium text-sm">Manage your delivery personnel and track their active workloads.</p>
             </div>
             <div className="w-full md:w-80">
                <div className="relative group">
@@ -82,26 +82,26 @@ const ManageDrivers = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
+          <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
              {loading ? (
                 <div className="flex items-center justify-center h-[400px]">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
               ) : filteredDrivers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[400px] text-gray-400">
+                <div className="flex flex-col items-center justify-center h-[400px] text-gray-400 p-8 text-center">
                   <HiOutlineTruck className="text-6xl mb-4" />
                   <p className="font-bold text-lg">{searchTerm ? "No results found" : "No drivers found in fleet"}</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
+                <div className="overflow-x-auto custom-scrollbar">
+                  <table className="w-full text-left min-w-[800px]">
                     <thead>
                       <tr className="border-b border-gray-50 bg-gray-50/50">
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact Details</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Joined Date</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-center">Verification Status</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                        <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Driver Identity</th>
+                        <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Contact Details</th>
+                        <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Joined Date</th>
+                        <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-center">Verification Status</th>
+                        <th className="px-6 sm:px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
